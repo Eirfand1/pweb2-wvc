@@ -14,11 +14,11 @@ module.exports = {
   plugins: [
     require('daisyui'),
   ],
-  // Pastikan DaisyUI tidak override class Tailwind
   daisyui: {
-    base: true, // jika false, akan menonaktifkan style dasar DaisyUI
-    styled: true, // jika false, akan menonaktifkan semua style
+    base: true, 
+    styled: true, 
     utils: true,
+    themes: ['light','dark','garden']
   },
 }
 

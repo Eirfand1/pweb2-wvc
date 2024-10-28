@@ -1,6 +1,6 @@
-<div class="navbar bg-base-100">
+<div class="navbar mb-4 bg-base-100">
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl">Kelompok4 Web</a>
+    <a href="/" class="btn btn-ghost text-2xl font-serif">Kelompok 4</a>
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">

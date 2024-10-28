@@ -29,10 +29,10 @@ class Model extends Database {
         return $this->conn->query($query);
     }
 
-    public function find($id) {
-        $query = "SELECT * FROM {$this->table} WHERE id='{$id}'";
+    public function find($column,$id) {
+        $query = "SELECT * FROM {$this->table} WHERE {$column}='{$id}'";
         $result = $this->conn->query($query);
-        return $result->fetch_assoc();
+        return $result;
     }
 
     public function update($id, $data) {
@@ -65,6 +65,7 @@ class Model extends Database {
         );
         return $this;
     }
+ 
 
     public function leftJoin($table, $first, $operator, $second) {
         return $this->join($table, $first, $operator, $second, 'LEFT');
@@ -90,7 +91,7 @@ class Model extends Database {
         $this->where = [];
 
         return $this->conn->query($query);
-    }
+    } 
 }
 
 
