@@ -12,7 +12,7 @@
    <?php require_once './components/navbar.php' ?>
 
    <div class="mx-auto py-4 px-2 sm:px-6 lg:px-8">
-      <div class="bg-gray-100 border border-dotted border-black w-full mx-auto md:w-9/12 rounded-sm overflow-hidden">
+      <div class="bg-gray-100 border border-dotted border-black max-w-3xl mx-auto rounded-sm overflow-hidden">
          <div class="p-6">
             <h1 class="text-5xl font-bold mb-4"><?= $detail['judul'] ?></h1>
             <div class="flex items-center mb-4">
@@ -20,7 +20,7 @@
                   <img src="https://via.placeholder.com/48" alt="<?= $detail['nama'] ?>" class="rounded-full">
                </div> -->
                <div>
-                  <p class="font-medium"><?= $detail['nama'] ?></p>
+                  <p class="font-medium">By : <?= $detail['nama'] ?></p>
                   <p class="text-gray-600"><?= $detail['bio'] ?></p>
                </div>
             </div>
