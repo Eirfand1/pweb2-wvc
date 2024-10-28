@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>navbar</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+   <aside x-data="{ isExpanded: true }">
+      <div 
+      :class="isExpanded ? 'w-64' : 'w-16'" 
+      class="sidebar h-screen flex flex-col text-white bg-neutral-800  gap-4 relative transition-all duration-300"
+      >
+      <div class="flex justify-between items-center">
+         <div class="flex gap-4 bg-purple-800 w-full items-center p-2 transition-all">
+            <img src="https://upload.wikimedia.org/wikipedia/id/d/db/Politeknik_Negeri_Cilacap.png" alt="img" style="width: 45px;" class="bg-gray-100 p-1 rounded-lg" >
+            <h1 class="text-2xl absolute left-16 font-semibold" x-show="isExpanded" x-transition:enter.duration.1000ms>SI-Surat Dosen</h1>
+         </div>
+         <button 
+         @click="isExpanded = !isExpanded" 
+         class="absolute -right-12 top-1 bg-gray-600 py-1.5 px-2 rounded-full"
+         >
+         <i class='bx bx-menu text-3xl'></i>
+      </button>
+   </div>
+   <ul class="p-3">
+      <li class="mb-2 ">
+         <a href="" class="flex items-center gap-4 hover:bg-neutral-700 rounded p-1">
+            <i class='bx bx-grid-alt text-3xl'></i>
+            <span x-show="isExpanded" x-transition>Dosen</span>
+         </a>
+      </li>
+      <li class="mb-2 ">
+         <a href="" class="flex items-center gap-4 hover:bg-neutral-700 rounded p-1">
+            <i class='bx bx-grid-alt text-3xl'></i>
+            <span x-show="isExpanded" x-transition>Mahasiswa</span>
+         </a>
+      </li>
+      <li class="mb-2 ">
+         <a href="" class="flex items-center gap-4 hover:bg-neutral-700 rounded p-1">
+            <i class='bx bx-grid-alt text-3xl'></i>
+            <span x-show="isExpanded" x-transition class="fixed " style="left: 62px;">Mata Kuliah</span>
+         </a>
+      </li>
+   </ul>
+</div>
+</aside>
+<div class="sm:ml-64 mx-auto overflow-hidden">
+   
+</div>
+</body>
+</html>
