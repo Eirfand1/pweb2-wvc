@@ -1,18 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-  "./src/**/*.{html,js,php}",
-  "./src/**/**/**/*.{html,js,php}",
-  "./*.html",
-  "./pages/**/*.{html,js,php}",
-  "./components/**/*.{html,js,php}",
-  "./public/*.{html,js,php}"
+    "./app/**/*.{php,html,js}",  // Tambah semua file di app
+    "./app/Views/**/*.{php,html,js,vue}",
+    "./public/**/*.{php,html,js}",
+    "./config/**/*.php",  // Tambah config jika ada template di sana
+    "*.{php,html,js}",  // Tambah root files
+    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {},
   },
   plugins: [
-    require('daisyui'), 
+    require('daisyui'),
   ],
+  // Pastikan DaisyUI tidak override class Tailwind
+  daisyui: {
+    base: true, // jika false, akan menonaktifkan style dasar DaisyUI
+    styled: true, // jika false, akan menonaktifkan semua style
+    utils: true,
+  },
 }
 
