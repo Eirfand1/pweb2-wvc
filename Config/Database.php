@@ -6,7 +6,7 @@ class Database{
    protected $conn;
    public function __construct() {
     $host = 'localhost';
-    $db   = 'tugas2';
+    $db   = 'pweb2kel4';
     $user = 'root';
     $pass = '';
 
