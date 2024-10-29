@@ -10,19 +10,27 @@
 <body class="min-h-screen" data-theme="garden">
    <?php require_once './components/navbar.php' ?>
 
-   <div class="mx-auto py-4 px-2 sm:px-6 lg:px-8">
-      <div class="bg-gray-100 border border-dotted border-black  p-6 mx-auto rounded-sm overflow-hidden">
+   <div class="mx-auto min-h-screen flex">
+   <?php require_once './components/sidebar.php' ?>
+      <div class="bg-gray-100 w-4/5 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
         <h1 class="text-2xl">List Artikel</h1>
         <table id="myTable" class="table">
          <thead>
             <tr>
+               <td>No</td>
                <td>Judul</td>
+               <td>Aksi</td>
             </tr>
          </thead>
          <tbody>
-            <?php foreach($artikel as $row) :?>
+            <?php $no=1; foreach($artikel as $row) :?>
                <tr>
+                  <td><?=$no++?></td>
                   <td><?=$row['judul']?></td>
+                  <td>
+                     <a href="" class="btn btn-sm btn-error">Hapus</a>
+                     <a href="" class="btn btn-sm btn-info">Edit</a>
+                  </td>
                </tr>
             <?php endforeach?>
          </tbody>
