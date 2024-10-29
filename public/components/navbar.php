@@ -1,10 +1,10 @@
-<div class="navbar mb-4 bg-base-100">
+<div class="navbar  bg-base-100">
   <div class="flex-1">
     <a href="/" class="btn btn-ghost text-2xl font-serif">Kelompok 4</a>
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
-      <li><a>Link</a></li>
+      <li><a href="/dashboard/1">Dahboard</a></li>
       <li>
         <details>
           <summary>Parent</summary>
