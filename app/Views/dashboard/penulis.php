@@ -18,15 +18,18 @@
          <thead>
             <tr>
                <td>No</td>
-               <td>Judul</td>
-               <td>Aksi</td>
+               <td>Nama</td>
+               <td>Biografi</td>
+               <td>Profil</td>
             </tr>
          </thead>
          <tbody>
-            <?php $no=1; foreach($artikel as $row) :?>
+            <?php $no=1; foreach($data as $row) :?>
                <tr>
                   <td><?=$no++?></td>
-                  <td><?=$row['judul']?></td>
+                  <td><?=$row['nama']?></td>
+                  <td><?=$row['bio']?></td>
+                  <td><?=$row['profil']?></td>
                   <td>
                      <a href="" class="btn btn-sm btn-error">Hapus</a>
                      <a href="" class="btn btn-sm btn-info">Edit</a>
