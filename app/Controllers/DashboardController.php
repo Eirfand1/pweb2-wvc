@@ -39,7 +39,7 @@ class DashboardController extends Controller {
 
       if($result){
         echo "<script>
-         alert('Data Mahasiswa berhasil di tambah')
+         alert('Data Artikel berhasil di tambah')
          location.href = '/dashboard/{$id}/artikel' </script>" 
         ;
       }

@@ -10,10 +10,12 @@
    <title><?= $detail['nama'] ?></title>
 </head>
 <body class="min-h-screen" data-theme="garden">
-   <?php require_once './components/navbar.php' ?>
    <div class="flex min-h-screen">
-      <?php require_once './components/sidebar.php' ?>
-      <div class="mx-auto w-4/5 ">
+
+      <?php require_once './components/sideDashboard.php' ?>
+      <div class="w-4/5 ">
+   <?php require_once './components/navDashboard.php' ?>
+      <div class="mx-auto ">
          <div class="bg-gray-100 min-h-screen border border-dotted border-black  p-6 mx-auto rounded-sm overflow-hidden">
             <form method="post" class="grid gap-4">
                <div class="flex flex-col gap-2">
@@ -42,6 +44,8 @@
             </form> 
          </div>
       </div>
+      </div>
+      
    </div>
    
 </body>
