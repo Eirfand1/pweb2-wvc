@@ -1,4 +1,6 @@
 <?php 
+
+//Koneksi ke database pweb2kel4
 namespace Config;
 use mysqli;
 use mysqli_sql_exception;

@@ -1,10 +1,14 @@
 <?php 
+namespace App\Models;   
 
-namespace App\Models;
-
-class Penulis extends Model {
-   public function __construct(){
-      parent::__construct();
-      $this->table = 'penulis';
+//class turunan dari model
+class Penulis extends Model{
+   
+   //memanggill construct dari parent
+   public  function __construct() {
+      parent ::__construct();
+      //mendefinisikan nama tabel(model)
+      $this->table = "penulis";
    }
-}
+   }  
+?>

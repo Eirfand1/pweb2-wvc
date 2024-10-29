@@ -1,14 +1,17 @@
 <?php 
 
 namespace App\Controllers;
+//menggunakan file lain
 use App\Controller;
 use App\Models\Penulis;
 use App\Models\Artikel;
 
+//class turunan dari controller
 class DashboardController extends Controller {
    private $penulis, $artikel, $userId;
    public function __construct(){
       $this->penulis = new Penulis();
+      //instansiasi model artikel
       $this->artikel = new Artikel();
    }
    public function index($id){
@@ -25,5 +28,12 @@ class DashboardController extends Controller {
          'dashboard/artikel',
          ['artikel'=> $artikel]
       );
+   }
+
+
+   //method untuk menampilkan list penulis 
+   public function listPenulis($id) {
+      $result = $this->penulis->all();
+      return $this->render('dashboard/penulis', ['data' => $result]);
    }
 }
