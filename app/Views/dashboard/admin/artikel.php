@@ -1,7 +1,4 @@
 <?php
-$current_url = $_SERVER['REQUEST_URI'];
-$url_parts = explode('/', $current_url);
-$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,10 +11,10 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
    <?php require_once './components/navbar.php' ?>
 
    <div class="mx-auto min-h-screen flex">
-   <?php require_once './components/sidebar.php' ?>
+   <?php require_once './components/admin/sidebar.php' ?>
       <div class="bg-gray-100 w-4/5 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
-        <h1 class="text-2xl font-semibold mb-2">List Artikel</h1>
-        <a href="/dashboard/<?=$dashboard_id?>/artikel/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Postingan </a>
+        <h1 class="text-2xl">List Artikel</h1>
+        
         <table id="myTable" class="table">
          <thead>
             <tr>
@@ -27,13 +24,13 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
             </tr>
          </thead>
          <tbody>
-            <?php $no=1; foreach($artikel as $row) :?>
+            <?php $no=1; foreach($data as $row) :?>
                <tr>
                   <td><?=$no++?></td>
                   <td><?=$row['judul']?></td>
                   <td>
-                     <a href="/dashboard/<?=$dashboard_id?>/artikel/<?=$row['id_artikel']?>" class="btn btn-sm btn-error btn-outline">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info btn-outline">Edit</a>
+                     <a href="" class="btn btn-sm btn-error">Hapus</a>
+                     <a href="" class="btn btn-sm btn-info">Edit</a>
                   </td>
                </tr>
             <?php endforeach?>

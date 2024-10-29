@@ -1,39 +1,41 @@
 <?php
-$current_url = $_SERVER['REQUEST_URI'];
-$url_parts = explode('/', $current_url);
-$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>list artikel</title>
+   <title>list Komentar</title>
 </head>
 <body class="min-h-screen" data-theme="garden">
    <?php require_once './components/navbar.php' ?>
 
    <div class="mx-auto min-h-screen flex">
-   <?php require_once './components/sidebar.php' ?>
+   <?php require_once './components/admin/sidebar.php' ?>
       <div class="bg-gray-100 w-4/5 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
-        <h1 class="text-2xl font-semibold mb-2">List Artikel</h1>
-        <a href="/dashboard/<?=$dashboard_id?>/artikel/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Postingan </a>
+        <h1 class="text-2xl">List Komentar</h1>
         <table id="myTable" class="table">
          <thead>
             <tr>
                <td>No</td>
-               <td>Judul</td>
+               <td>Username</td>
+               <td>Isi Komentar</td>
+               <td>Tanggal Update</td>
+               <td>Artikel Id</td>
                <td>Aksi</td>
             </tr>
          </thead>
          <tbody>
-            <?php $no=1; foreach($artikel as $row) :?>
+            <?php $no=1; foreach($data as $row) :?>
                <tr>
                   <td><?=$no++?></td>
-                  <td><?=$row['judul']?></td>
+                  <td><?=$row['username']?></td>
+                  <td><?=$row['isi_komentar']?></td>
+                  <td><?=$row['tanggal_update']?></td>
+                  <td><?=$row['artikel_id']?></td>
                   <td>
-                     <a href="/dashboard/<?=$dashboard_id?>/artikel/<?=$row['id_artikel']?>" class="btn btn-sm btn-error btn-outline">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info btn-outline">Edit</a>
+                     <a href="" class="btn btn-sm btn-error">Hapus</a>
+                     <a href="" class="btn btn-sm btn-info">Edit</a>
                   </td>
                </tr>
             <?php endforeach?>

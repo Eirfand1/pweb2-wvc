@@ -28,8 +28,8 @@
                   <td><?=$no++?></td>
                   <td><?=$row['nama_kategori']?></td>
                   <td>
-                     <a href="" class="btn btn-sm btn-error">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info">Edit</a>
+                     <a href="" class="btn btn-outline btn-sm btn-error">Hapus</a>
+                     <a href="" class="btn btn-outline btn-sm btn-info">Edit</a>
                   </td>
                </tr>
             <?php endforeach?>

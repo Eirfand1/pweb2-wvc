@@ -34,11 +34,35 @@ class DashboardController extends Controller {
       );
    }
 
+   public function artikelStore($id){
+      $result = $this->artikel->insert($_POST);
+
+      if($result){
+        echo "<script>
+         alert('Data Mahasiswa berhasil di tambah')
+         location.href = '/dashboard/{$id}/artikel' </script>" 
+        ;
+      }
+   }
+
+   public function artikelDelete($id,$idArtikel){
+      $result = $this->artikel->delete('id_artikel',$idArtikel);
+      return $this->render('dashboard/deleteArtikel');
+   }
+
+   public function insertPageArtikel($id){
+     $user = $this->penulis->find('id_penulis',$id); 
+     $kategori = $this->kategori->all();
+     return $this->render('/dashboard/insertArtikel',[
+      'user'=>$user,
+      'kategori'=>$kategori
+     ]);
+   }
 
    //method untuk menampilkan list penulis 
-   public function listPenulis($id) {
+   public function listPenulis() {
       $result = $this->penulis->all();
-      return $this->render('dashboard/penulis', ['data' => $result]);
+      return $this->render('dashboard/admin/penulis', ['data' => $result]);
    }
 
    public function listKomentar($id){
@@ -50,5 +74,27 @@ class DashboardController extends Controller {
    public function listKategori($id){
       $result = $this->kategori->all();
       return $this->render(view: 'dashboard/kategori', data: ['kategori' => $result]);
+   }
+
+   public function listKomentarAdmin(){
+      $result = $this->komentar->all();
+      return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
+   }
+   public function listKategoriAdmin(){
+      $result = $this->kategori->all();
+      return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
+   }
+
+   public function indexAdmin(){
+      $user = $this->penulis->find('nama','admin');
+      return $this->render(
+         "dashboard/admin/index",
+         ['user'=> $user]
+      );
+   }
+
+   public function listArtikelAdmin(){
+      $result = $this->artikel->all();
+      return $this->render('/dashboard/admin/artikel', ['data'=> $result]);
    }
 }

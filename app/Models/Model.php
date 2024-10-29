@@ -24,8 +24,8 @@ class Model extends Database {
     }
 
     //method delete
-    public function delete($id) {
-        $query = "DELETE FROM {$this->table} WHERE id='{$id}'";
+    public function delete($column,$id) {
+        $query = "DELETE FROM {$this->table} WHERE {$column}='{$id}'";
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
     }
 
