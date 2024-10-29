@@ -119,4 +119,35 @@ class DashboardController extends Controller {
       $result = $this->artikel->all();
       return $this->render('/dashboard/admin/artikel', ['data'=> $result]);
    }
+
+   public function penulisStore(){
+      $result = $this->penulis->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Penulis berhasil di tambah')
+         location.href = '/dashboard/admin/penulis' </script>" 
+        ;
+      }
+   }
+
+   public function insertPagePenulis(){
+      return $this->render('/dashboard/admin/insertPenulis');
+   }
+
+   public function deletePenulis($id){
+      $result = $this->penulis->delete('id_penulis', $id);
+      return $this->render('/dashboard/admin/deletePenulis');
+   }
+
+   public function editPagePenulis($id){ 
+      $result = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/admin/editPenulis', ['data'=>$result]);
+   }  
+
+   public function penulisUpdate($id){
+      $result = $this->penulis->update('id_penulis', $id, $_POST);
+      if($result){
+         $this->render('dashboard/admin/editSuccesPenulis', ['']);
+      }
+   }
 }
