@@ -33,7 +33,7 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
                   <td><?=$row['judul']?></td>
                   <td>
                      <a href="/dashboard/<?=$dashboard_id?>/artikel/<?=$row['id_artikel']?>" class="btn btn-sm btn-error btn-outline">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info btn-outline">Edit</a>
+                     <a href="/dashboard/<?=$dashboard_id?>/artikel/edit/<?=$row['id_artikel']?>" class="btn btn-sm btn-info btn-outline">Edit</a>
                   </td>
                </tr>
             <?php endforeach?>

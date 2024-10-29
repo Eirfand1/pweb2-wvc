@@ -45,6 +45,28 @@ class DashboardController extends Controller {
       }
    }
 
+   public function artikelPageUpdate($uid, $aid){
+      $result = $this->artikel->find('id_artikel', $aid);
+      $kategori = $this->kategori->all();
+      $user = $this->penulis->find('id_penulis', $uid);
+
+      return $this->render(
+         'dashboard/editArtikel',
+         [
+            'user' => $user,
+            'data'=> $result,
+            'kategori'=>$kategori
+            ]
+      );
+   }
+
+   public function artikelUpdate($uid, $aid){
+      $result = $this->artikel->update('id_artikel',$aid, $_POST);
+      if($result){
+         $this->render('/dashboard/editSuccess', ['']);
+      }
+   }
+
    public function artikelDelete($id,$idArtikel){
       $result = $this->artikel->delete('id_artikel',$idArtikel);
       return $this->render('dashboard/deleteArtikel');

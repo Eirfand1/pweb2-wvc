@@ -1,7 +1,6 @@
 <?php
 
 use App\Controllers\ArtikelController;
-use App\Controllers\HomeController;
 use App\Controllers\DashboardController;
 use App\Router;
 
@@ -21,6 +20,8 @@ $router->get('/dashboard/{id}/artikel', DashboardController::class, 'listArtikel
 $router->get('/dashboard/{id}/artikel/tambah', DashboardController::class, 'insertPageArtikel');
 $router->post('/dashboard/{id}/artikel/tambah', DashboardController::class, 'artikelStore');
 $router->get('/dashboard/{id}/artikel/{aid}', DashboardController::class, 'artikelDelete');
+$router->get('/dashboard/{id}/artikel/edit/{aid}', DashboardController::class, 'artikelPageUpdate');
+$router->post('/dashboard/{id}/artikel/edit/{aid}', DashboardController::class, 'artikelUpdate');
 //mendefinisikan nama url dan class dan method controller yang akan digunakan
 $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis");
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
