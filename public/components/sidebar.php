@@ -1,5 +1,4 @@
 <div class="w-1/5 p-6 bg-slate-800 text-gray-100">
-    <h1 class="mb-8 text-2xl font-bold text-white">Admin Panel</h1>
     
     <ul class="menu menu-vertical gap-2">
         <li>
