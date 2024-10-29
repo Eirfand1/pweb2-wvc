@@ -1,17 +1,21 @@
 <?php
+//mendefinisikan nama class folder agar bisa dipakai ooleh file lain
 namespace App\Models;
 use Config\Database;
 
+//class turunan dari database
 class Model extends Database {
     protected $table;
     protected $select = "*";
     protected $joins = [];
     protected $where = [];
     
+    //memanggil construct dari parent
     public function __construct() {
         parent::__construct();
     }
 
+    //method insert
     public function insert($data) {
         $columns = implode(", ", array_keys($data));
         $values = "'" . implode("', '", array_values($data)) . "'";
@@ -19,6 +23,7 @@ class Model extends Database {
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
     }
 
+    //method delete
     public function delete($id) {
         $query = "DELETE FROM {$this->table} WHERE id='{$id}'";
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
@@ -35,6 +40,7 @@ class Model extends Database {
         return $result;
     }
 
+    //method update
     public function update($id, $data) {
         $updates = [];
         foreach($data as $key => $value) {
@@ -45,11 +51,13 @@ class Model extends Database {
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
     }
 
+    //method mencari data
     public function where($column, $value) {
         $this->where[] = "{$column}='{$value}'";
         return $this;
     }
 
+    //method memilih
     public function select($columns) {
         if (is_array($columns)) {
             $this->select = implode(', ', $columns);
@@ -59,6 +67,7 @@ class Model extends Database {
         return $this;
     }
 
+    //method menggabungkan table
     public function join($table, $first, $operator, $second, $type = 'INNER') {
         $this->joins[] = sprintf(' %s JOIN %s ON %s %s %s', 
             $type, $table, $first, $operator, $second
@@ -75,6 +84,7 @@ class Model extends Database {
         return $this->join($table, $first, $operator, $second, 'RIGHT');
     }
 
+    //method ambil data 
     public function get() {
         $query = "SELECT {$this->select} FROM {$this->table}";
         
