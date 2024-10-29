@@ -6,15 +6,17 @@ use App\Controller;
 use App\Models\Penulis;
 use App\Models\Artikel;
 use App\Models\Komentar;
+use App\Models\Kategori;
 
 //class turunan dari controller
 class DashboardController extends Controller {
-   private $penulis, $artikel, $userId, $komentar;
+   private $penulis, $artikel, $userId, $komentar, $kategori;
    public function __construct(){
       $this->penulis = new Penulis();
       //instansiasi model artikel
       $this->artikel = new Artikel();
       $this->komentar = new Komentar();
+      $this->kategori = new Kategori();
    }
    public function index($id){
       $user = $this->penulis->find('id_penulis',$id);
@@ -43,5 +45,10 @@ class DashboardController extends Controller {
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/komentar', data: ['data' => $result]);
 
+   }
+
+   public function listKategori($id){
+      $result = $this->kategori->all();
+      return $this->render(view: 'dashboard/kategori', data: ['kategori' => $result]);
    }
 }

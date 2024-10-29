@@ -16,5 +16,6 @@ $router->get('/dashboard/{id}/artikel', DashboardController::class, 'listArtikel
 //mendefinisikan nama url dan class dan method controller yang akan digunakan
 $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis");
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
+$router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
 
 $router->dispatch();
