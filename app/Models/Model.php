@@ -24,8 +24,8 @@ class Model extends Database {
     }
 
     //method delete
-    public function delete($id) {
-        $query = "DELETE FROM {$this->table} WHERE id='{$id}'";
+    public function delete($column,$id) {
+        $query = "DELETE FROM {$this->table} WHERE {$column}='{$id}'";
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
     }
 
@@ -41,13 +41,13 @@ class Model extends Database {
     }
 
     //method update
-    public function update($id, $data) {
+    public function update($column,$id, $data) {
         $updates = [];
         foreach($data as $key => $value) {
             $updates[] = "{$key}='{$value}'";
         }
         $updates = implode(", ", $updates);
-        $query = "UPDATE {$this->table} SET {$updates} WHERE id='{$id}'";
+        $query = "UPDATE {$this->table} SET {$updates} WHERE {$column}='{$id}'";
         return $this->conn->query($query) or die("Error: " . $this->conn->error);
     }
 

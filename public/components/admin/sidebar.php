@@ -4,9 +4,11 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 ?>
 
-<div class="w-1/5 p-6 bg-slate-800 text-gray-100">
-    
+<div class="w-1/5 p-2 bg-slate-800 text-gray-100">
     <ul class="menu menu-vertical gap-2">
+        <li>
+            <a href="/" class="text-2xl btn-ghost text-center mb-2 font-semibold"> Kelompok 4</a>   
+        </li>
         <li>
             <a href="/dashboard/<?=$dashboard_id?>" class="flex items-center gap-3 text-gray-300 hover:bg-slate-700 hover:text-white active:bg-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -28,6 +30,17 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
                 Artikel
             </a>
         </li>
+        <li>
+            <a href="/dashboard/<?=$dashboard_id?>/penulis" class="flex items-center gap-3 text-gray-300 hover:bg-slate-700 hover:text-white active:bg-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Penulis
+            </a>
+        </li></li>
         <li>
             <a href="/dashboard/<?=$dashboard_id?>/kategori" class="flex items-center gap-3 text-gray-300 hover:bg-slate-700 hover:text-white active:bg-slate-600">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
