@@ -42,7 +42,7 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
                   <td><?=$row['bio']?></td>
                   <td><?=$row['profil']?></td>
                   <td>
-                     <a href="/dashboard/admin/penulis/<?=$row['id_penulis']?>" class="btn btn-sm btn-error">Hapus</a>
+                  <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_penulis']?>)">Hapus</button>
                      <a href="/dashboard/admin/penulis/edit/<?=$row['id_penulis']?>" class="btn btn-sm btn-info">Edit</a>
                      <a href="/dashboard/<?=$row['id_penulis']?>" class="btn btn-sm btn-success">Masuk</a>
 
@@ -55,5 +55,25 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
       </div>
       
    </div>
+
+   <script>
+      function confirmDelete(id) {
+         Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data ini akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               // Redirect to the delete URL
+               window.location.href = '/dashboard/admin/penulis/' + id;
+            }
+         });
+      }
+   </script>
 </body>
 </html>
