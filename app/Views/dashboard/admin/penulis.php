@@ -18,10 +18,13 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
    <?php require_once './components/admin/sidebar.php' ?>
       <div class="w-5/6">
    <?php require_once './components/navDashboard.php' ?>
+
       <div class="bg-gray-100  p-6  rounded-sm overflow-hidden">
+
 
         <h1 class="text-2xl">List Penulis</h1>
         <a href="/dashboard/<?= $dashboard_id?>/penulis/tambah" class="btn btn-primary">Tambah Penulis</a>
+
 
         <table id="myTable" class="table">
          <thead>
