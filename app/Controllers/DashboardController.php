@@ -150,4 +150,30 @@ class DashboardController extends Controller {
          $this->render('dashboard/admin/editSuccesPenulis', ['']);
       }
    }
+
+   public function insertPageKategori(){
+      return $this->render('/dashboard/admin/insertKategori');
+   }
+
+   public function kategoriStore(){
+      $result = $this->kategori->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Kategori berhasil di tambah')
+         location.href = '/dashboard/admin/kategori' </script>" 
+        ;
+      }
+   }
+
+   public function editPageKategori($id){
+      $result = $this->kategori->find('id_kategori', $id);
+      return $this->render('dashboard/admin/editKategori', ['data'=>$result]);
+   }
+
+   public function kategoriUpdate($id){
+      $result = $this->kategori->update('id_kategori', $id, $_POST);
+      if($result){
+         $this->render('dashboard/admin/editSuccesKategori', ['']);
+      }
+   }
 }
