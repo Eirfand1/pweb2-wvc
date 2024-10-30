@@ -1,5 +1,4 @@
 <?php
-$komentar = $data->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,19 +18,19 @@ $komentar = $data->fetch_assoc();
             <form method="post" class="grid gap-4">
                 <div class="flex flex-col gap-2">
                   <label for="isi">Username</label>
-                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$komentar['username']?>" readonly>
+                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$uid['nama']?>" readonly>
                </div>
                <div class="flex flex-col gap-2">
                   <label for="isi">Isi Komentar</label>
-                  <input type="text" name="isi_komentar" id="" class="input input-bordered" value="<?=$komentar['isi_komentar']?>">
+                  <input type="text" name="isi_komentar" id="" class="input input-bordered">
                </div>
                <div class="flex flex-col gap-2">
                   <label for="id">Artikel ID</label>
-               
-                     <?php $row = $artikel->fetch_all(MYSQLI_ASSOC);?>
-                     <input type="text" name="artikel_id" value="<?=$komentar['artikel_id']?>" readonly class="input input-bordered">
-                  
-                 
+                  <select name="artikel_id" id="" class="select select-bordered">
+                     <?php foreach($artikel as $row) : ?>
+                        <option value="<?=$row['id_artikel']?>"><?=$row['judul']?></option>
+                     <?php endforeach?>
+                  </select>
                </div>
                <div>
                   <button type="submit" class="btn btn-primary">Tambah Komentar</button>

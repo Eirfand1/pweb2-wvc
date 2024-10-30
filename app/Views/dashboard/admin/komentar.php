@@ -36,8 +36,7 @@
                   <td><?=$row['tanggal_update']?></td>
                   <td><?=$row['artikel_id']?></td>
                   <td>
-                     <a href="" class="btn btn-sm btn-error">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info">Edit</a>
+                  <a href="/dashboard/<?=$dashboard_id?>/komentar/hapus/<?=$row['id_komentar']?>" class="btn btn-outline btn-sm btn-error">Hapus</a>
                   </td>
                </tr>
             <?php endforeach?>

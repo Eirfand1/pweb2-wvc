@@ -176,4 +176,45 @@ class DashboardController extends Controller {
          $this->render('dashboard/admin/editSuccesKategori', ['']);
       }
    }
+
+   public function insertPageKomentar($id){
+      $result = $this->komentar->find('artikel_id', $id);
+      $artikel = $this->artikel->all();
+      $username = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/insertKomentar',['artikel'=>$artikel, 'uid'=>$username->fetch_assoc()]);
+   }
+
+   public function komentarStore($id){
+      $result = $this->komentar->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Komentar berhasil di tambah')
+         location.href = '/dashboard/{$id}/komentar' </script>" 
+        ;
+      }
+   }
+
+   public function deleteKomentar($id,$kid){
+      $result = $this->komentar->delete('id_komentar', id: $kid);
+      return $this->render("/dashboard/deleteKomentar");
+   }
+
+   public function editPageKomentar($id,$kid){
+      $result = $this->komentar->find('id_komentar', $kid);
+      $artikel = $this->artikel->all();
+      return $this->render('dashboard/editKomentar', ['data'=>$result,'artikel'=>$artikel]);
+   }
+
+   public function komentarUpdate($id,$kid){
+      $result = $this->komentar->update('id_komentar', $kid, $_POST);
+      if($result){
+         $this->render('dashboard/editSuccessKomentar', ['']);
+      }
+   }
+
+   public function deleteKomentarAdmin($id){
+      $result = $this->komentar->delete('id_komentar', $id);
+      return $this->render('/dashboard/admin/deleteKomentar');
+   }
+
 }
