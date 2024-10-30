@@ -14,10 +14,10 @@
         <div class="flex-1 flex flex-col">
             <?php require_once './components/navDashboard.php'; ?>
             
-            <div class="p-6 bg-gray-100 flex-1">
+            <div class="m-4 rounded bg-gray-50 p-6  flex-1">
                     <h1 class="text-2xl font-bold mb-6">Kategori Artikel</h1>
                     <a href="/dashboard/<?= $dashboard_id?>/kategori/tambah" class="btn btn-primary btn-outline">Tambah Kategori</a>
-                        <table id="myTable" class="table w-full">
+                        <table id="myTable" class="display border border-gray-400">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>

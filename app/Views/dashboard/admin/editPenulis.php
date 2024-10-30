@@ -16,7 +16,7 @@ $penulis=$data-> fetch_assoc();
       <div class="w-5/6 ">
    <?php require_once './components/navDashboard.php' ?>
       <div class="mx-auto ">
-         <div class="bg-gray-100 min-h-screen  p-6 mx-auto rounded-sm overflow-hidden">
+         <div class="m-4 rounded bg-gray-50 min-h-screen  p-6  overflow-hidden">
 
             <form method="post" class="grid gap-4">
                <div class="flex flex-col gap-2">
