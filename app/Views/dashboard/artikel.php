@@ -15,12 +15,12 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
    <div class="mx-auto min-h-screen flex">
       <?php require_once './components/sideDashboard.php' ?>
-      <div class="bg-gray-100 w-5/6 border border-dotted border-black rounded-sm overflow-hidden">
+      <div class="w-5/6  rounded-sm overflow-hidden">
          <?php require_once './components/navDashboard.php' ?>
-         <div class="p-6">
+         <div class="p-6 m-4 rounded bg-gray-50">
             <h1 class="text-2xl font-semibold mb-2">List Artikel</h1>
             <a href="/dashboard/<?=$dashboard_id?>/artikel/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Postingan </a>
-            <table id="myTable" class="table">
+            <table id="myTable" class="display border border-gray-400">
                <thead>
                   <tr>
                      <td>No</td>

@@ -14,10 +14,10 @@
         <div class="flex-1 flex flex-col">
             <?php require_once './components/navDashboard.php'; ?>
             
-            <div class="p-6 bg-gray-100 flex-1">
+            <div class="p-6 m-4 rounded bg-gray-50 flex-1">
                     <h1 class="text-2xl font-bold mb-6">Kategori Artikel</h1>
                     <h1>cekk</h1>
-                        <table id="myTable" class="table w-full">
+                        <table id="myTable" class="display border border-gray-400">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
