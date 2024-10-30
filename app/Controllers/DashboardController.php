@@ -98,6 +98,11 @@ class DashboardController extends Controller {
       return $this->render(view: 'dashboard/kategori', data: ['kategori' => $result]);
    }
 
+   public function editPageKategori($id,){
+      $kategori = $this->kategori->all();
+      return $this->render('/dashboard/editKategori', ['kategori'=>$kategori]);
+   }
+
    public function listKomentarAdmin(){
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);

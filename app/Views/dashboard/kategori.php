@@ -39,7 +39,7 @@
                                            onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
                                             Hapus
                                         </a>
-                                        <a href="edit.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
+                                        <a href="editKategori.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
                                            class="btn btn-outline btn-sm btn-info">
                                             Edit
                                         </a>

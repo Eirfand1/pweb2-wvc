@@ -26,5 +26,6 @@ $router->post('/dashboard/{id}/artikel/edit/{aid}', DashboardController::class, 
 $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis");
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
 $router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
+$router->get('/dashboard/{id}/kategori/edit{id}', DashboardController::class, 'editKategori');
 
 $router->dispatch();
