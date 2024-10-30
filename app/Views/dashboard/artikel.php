@@ -15,7 +15,9 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
    <div class="mx-auto min-h-screen flex">
       <?php require_once './components/sideDashboard.php' ?>
-      <div class="bg-gray-100 w-4/5 border border-dotted border-black rounded-sm overflow-hidden">
+
+      <div class="bg-gray-100 w-5/6  rounded-sm overflow-hidden">
+
          <?php require_once './components/navDashboard.php' ?>
          <div class="p-6">
             <h1 class="text-2xl font-semibold mb-2">List Artikel</h1>

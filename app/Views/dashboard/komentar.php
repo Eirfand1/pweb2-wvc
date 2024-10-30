@@ -14,9 +14,9 @@ $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
    <div class="mx-auto min-h-screen flex">
    <?php require_once './components/sideDashboard.php' ?>
-   <div class="w-4/5">
+   <div class="w-5/6">
       <?php require_once './components/navDashboard.php' ?>
-      <div class="bg-gray-100 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
+      <div class="bg-gray-100   p-6  rounded-sm overflow-hidden">
         <h1 class="text-2xl">List Komentar</h1>
         <a href="/dashboard/<?=$dashboard_id?>/komentar/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Komentar </a>
         <table id="myTable" class="table">
