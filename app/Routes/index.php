@@ -30,8 +30,8 @@ $router->post('/dashboard/{id}/artikel/edit/{aid}', DashboardController::class, 
 $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis");
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
 
-$router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
-$router->get('/dashboard/{id}/kategori/edit{id}', DashboardController::class, 'editKategori');
+// $router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
+// $router->get('/dashboard/{id}/kategori/edit{id}', DashboardController::class, 'editKategori');
 
 // $router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
 
@@ -46,5 +46,8 @@ $router->post('/dashboard/admin/penulis/edit/{id}', DashboardController::class, 
 //CRUD KATEGORI (ADMIN)
 $router->get('/dashboard/admin/kategori/tambah', DashboardController::class, 'insertPageKategori');
 $router->post('/dashboard/admin/kategori/tambah', DashboardController::class, 'kategoriStore');
+$router->get('/dashboard/admin/kategori/{id}', DashboardController::class, 'deleteKategori');
+$router->get('/dashboard/admin/kategori/edit/{id}', DashboardController::class,'editPageKategori');
+$router->post('/dashboard/admin/kategori/edit/{id}', DashboardController::class,'kategoriUpdate');
 $router->get('/dashboard/admin/kategori', DashboardController::class, 'listKategoriAdmin');
 $router->dispatch();

@@ -34,12 +34,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($no++) ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($row['nama_kategori']) ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                                        <a href="delete.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
-                                           class="btn btn-outline btn-sm btn-error"
-                                           onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
-                                            Hapus
-                                        </a>
-                                        <a href="edit.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
+                                    <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_kategori']?>)">Hapus</button>
+                                        <a href="/dashboard/admin/kategori/edit/<?= htmlspecialchars($row['id_kategori'] ?? '') ?>" 
                                            class="btn btn-outline btn-sm btn-info">
                                             Edit
                                         </a>
@@ -49,8 +45,29 @@
                             </tbody>
                         </table>
             </div>
+            
         </div>
+
     </div>
 
+    <script>
+      function confirmDelete(id) {
+         Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data ini akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               // Redirect to the delete URL
+               window.location.href = '/dashboard/admin/kategori/' + id;
+            }
+         });
+      }
+   </script>
 </body>
 </html>

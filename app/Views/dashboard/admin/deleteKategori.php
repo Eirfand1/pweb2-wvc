@@ -4,7 +4,7 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
 echo "<script>
-  alert('Data Kategori berhasil di edit')
+  alert('Data Kategori berhasil di hapus')
   location.href = '/dashboard/{$dashboard_id}/kategori'
 
 </script>";

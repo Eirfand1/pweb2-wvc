@@ -98,10 +98,6 @@ class DashboardController extends Controller {
       return $this->render(view: 'dashboard/kategori', data: ['kategori' => $result]);
    }
 
-   public function editPageKategori($id,){
-      $kategori = $this->kategori->all();
-      return $this->render('/dashboard/editKategori', ['kategori'=>$kategori]);
-   }
 
    public function listKomentarAdmin(){
       $result = $this->komentar->all();
@@ -170,9 +166,14 @@ class DashboardController extends Controller {
       }
    }
 
+   public function deleteKategori($id){
+      $result = $this->kategori->delete("id_kategori", $id);
+      return $this->render("/dashboard/admin/deleteKategori");
+   }
+
    public function editPageKategori($id){
       $result = $this->kategori->find('id_kategori', $id);
-      return $this->render('dashboard/admin/editKategori', ['data'=>$result]);
+      return $this->render('dashboard/admin/editPageKategori', ['kategori'=>$result]);
    }
 
    public function kategoriUpdate($id){
