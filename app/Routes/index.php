@@ -27,4 +27,12 @@ $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
 $router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
 
+$router->get('/dashboard/admin/penulis/tambah', DashboardController::class, 'insertPagePenulis');
+$router->post('/dashboard/admin/penulis/tambah', DashboardController::class, 'penulisStore');
+
+$router->get('/dashboard/admin/penulis/{id}', DashboardController::class, 'deletePenulis');
+
+$router->get('/dashboard/admin/penulis/edit/{id}', DashboardController::class, 'editPagePenulis');
+
+$router->post('/dashboard/admin/penulis/edit/{id}', DashboardController::class, 'penulisUpdate');
 $router->dispatch();
