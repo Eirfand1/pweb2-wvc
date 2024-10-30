@@ -7,10 +7,10 @@ use mysqli_sql_exception;
 class Database{
    protected $conn;
    public function __construct() {
-    $host = 'localhost';
-    $db   = 'pweb2kel4';
-    $user = 'root';
-    $pass = '';
+    $host = 'mdi.my.id';
+    $db   = 'basdeat2_klp4';
+    $user = 'basdeat2_usr4';
+    $pass = '7.8fBotqbm&C~*.@#h';
 
 
     $this->conn = new mysqli($host, $user, $pass, $db);

@@ -16,7 +16,7 @@
             
             <div class="p-6 bg-gray-100 flex-1">
                     <h1 class="text-2xl font-bold mb-6">Kategori Artikel</h1>
-                    
+                    <h1>cekk</h1>
                         <table id="myTable" class="table w-full">
                             <thead class="bg-gray-50">
                                 <tr>
