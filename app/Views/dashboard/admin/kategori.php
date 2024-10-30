@@ -16,7 +16,7 @@
             
             <div class="p-6 bg-gray-100 flex-1">
                     <h1 class="text-2xl font-bold mb-6">Kategori Artikel</h1>
-                    <a href="/dashboard/<?= $dashboard_id?>/kategori/tambah" class="btn btn-primary">Tambah Kategori</a>
+                    <a href="/dashboard/<?= $dashboard_id?>/kategori/tambah" class="btn btn-primary btn-outline">Tambah Kategori</a>
                         <table id="myTable" class="table w-full">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -34,13 +34,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($no++) ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><?= htmlspecialchars($row['nama_kategori']) ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                                        <a href="delete.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
-                                           class="btn btn-outline btn-sm btn-error"
-                                           onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
-                                            Hapus
-                                        </a>
-                                        <a href="edit.php?id=<?= htmlspecialchars($row['id'] ?? '') ?>" 
-                                           class="btn btn-outline btn-sm btn-info">
+                                    <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_kategori']?>)">Hapus</button>
+                                        <a href="/dashboard/admin/kategori/edit/<?=$row['id_kategori']?>" class="btn btn-sm btn-info">
                                             Edit
                                         </a>
                                     </td>
@@ -52,5 +47,24 @@
         </div>
     </div>
 
+    <script>
+      function confirmDelete(id) {
+         Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data ini akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               // Redirect to the delete URL
+               window.location.href = '/dashboard/admin/kategori/' + id;
+            }
+         });
+      }
+   </script>
 </body>
 </html>

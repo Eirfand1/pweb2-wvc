@@ -4,7 +4,11 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
 echo "<script>
-  alert('Artikel berhasil di hapus')
+ Swal.fire({
+  title: 'Good job!',
+  text: 'Artikel telah dihapus',
+  icon: 'success'
+});
   location.href = '/dashboard/{$dashboard_id}/artikel'
 
 </script>";
