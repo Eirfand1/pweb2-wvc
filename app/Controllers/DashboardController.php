@@ -102,6 +102,12 @@ class DashboardController extends Controller {
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
    }
+
+   public function deleteKomentarAdmin($id){
+      $result = $this->komentar->delete('id_komentar', $id);
+      return $this->render('/dashboard/admin/deleteKomentar');
+   }
+
    public function listKategoriAdmin(){
       $result = $this->kategori->all();
       return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
@@ -118,6 +124,11 @@ class DashboardController extends Controller {
    public function listArtikelAdmin(){
       $result = $this->artikel->all();
       return $this->render('/dashboard/admin/artikel', ['data'=> $result]);
+   }
+
+   public function deleteArtikel($id){
+      $result = $this->artikel->delete('id_artikel', $id);
+      return $this->render('/dashboard/admin/deleteArtikel');
    }
 
    public function penulisStore(){
@@ -176,4 +187,11 @@ class DashboardController extends Controller {
          $this->render('dashboard/admin/editSuccesKategori', ['']);
       }
    }
+
+   public function deleteKategori($id){
+      $result = $this->kategori->delete('id_kategori', $id);
+      return $this->render('/dashboard/admin/deleteKategori');
+   }
+
+   
 }

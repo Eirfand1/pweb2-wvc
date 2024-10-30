@@ -29,8 +29,7 @@
                   <td><?=$no++?></td>
                   <td><?=$row['judul']?></td>
                   <td>
-                     <a href="" class="btn btn-sm btn-error">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info">Edit</a>
+                    <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_artikel']?>)">Hapus</button>
                   </td>
                </tr>
             <?php endforeach?>
@@ -39,5 +38,24 @@
       </div>
    </div>
   </div>
+  <script>
+      function confirmDelete(id) {
+         Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data ini akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               // Redirect to the delete URL
+               window.location.href = '/dashboard/admin/artikel/' + id;
+            }
+         });
+      }
+   </script>
 </body>
 </html>
