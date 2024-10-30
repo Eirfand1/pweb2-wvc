@@ -4,7 +4,7 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 ?>
 
-<div class="w-1/5 p-6 bg-slate-800 text-gray-100">
+<div class="w-1/6 p-6 bg-slate-800 text-gray-100">
     
     <ul class="menu menu-vertical gap-2">
         <li>

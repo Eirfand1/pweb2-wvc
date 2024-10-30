@@ -102,6 +102,12 @@ class DashboardController extends Controller {
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
    }
+
+   public function deleteKomentarAdmin($id){
+      $result = $this->komentar->delete('id_komentar', $id);
+      return $this->render('/dashboard/admin/deleteKomentar');
+   }
+
    public function listKategoriAdmin(){
       $result = $this->kategori->all();
       return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
@@ -119,4 +125,111 @@ class DashboardController extends Controller {
       $result = $this->artikel->all();
       return $this->render('/dashboard/admin/artikel', ['data'=> $result]);
    }
+
+   public function deleteArtikel($id){
+      $result = $this->artikel->delete('id_artikel', $id);
+      return $this->render('/dashboard/admin/deleteArtikel');
+   }
+
+   public function penulisStore(){
+      $result = $this->penulis->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Penulis berhasil di tambah')
+         location.href = '/dashboard/admin/penulis' </script>" 
+        ;
+      }
+   }
+
+   public function insertPagePenulis(){
+      return $this->render('/dashboard/admin/insertPenulis');
+   }
+
+   public function deletePenulis($id){
+      $result = $this->penulis->delete('id_penulis', $id);
+      return $this->render('/dashboard/admin/deletePenulis');
+   }
+
+   public function editPagePenulis($id){ 
+      $result = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/admin/editPenulis', ['data'=>$result]);
+   }  
+
+   public function penulisUpdate($id){
+      $result = $this->penulis->update('id_penulis', $id, $_POST);
+      if($result){
+         $this->render('dashboard/admin/editSuccesPenulis', ['']);
+      }
+   }
+
+   public function insertPageKategori(){
+      return $this->render('/dashboard/admin/insertKategori');
+   }
+
+   public function kategoriStore(){
+      $result = $this->kategori->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Kategori berhasil di tambah')
+         location.href = '/dashboard/admin/kategori' </script>" 
+        ;
+      }
+   }
+
+   public function editPageKategori($id){
+      $result = $this->kategori->find('id_kategori', $id);
+      return $this->render('dashboard/admin/editKategori', ['data'=>$result]);
+   }
+
+   public function kategoriUpdate($id){
+      $result = $this->kategori->update('id_kategori', $id, $_POST);
+      if($result){
+         $this->render('dashboard/admin/editSuccesKategori', ['']);
+      }
+   }
+
+
+   public function insertPageKomentar($id){
+      $result = $this->komentar->find('artikel_id', $id);
+      $artikel = $this->artikel->all();
+      $username = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/insertKomentar',['artikel'=>$artikel, 'uid'=>$username->fetch_assoc()]);
+   }
+
+   public function komentarStore($id){
+      $result = $this->komentar->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Komentar berhasil di tambah')
+         location.href = '/dashboard/{$id}/komentar' </script>" 
+        ;
+      }
+   }
+
+   public function deleteKomentar($id,$kid){
+      $result = $this->komentar->delete('id_komentar', id: $kid);
+      return $this->render("/dashboard/deleteKomentar");
+   }
+
+   public function editPageKomentar($id,$kid){
+      $result = $this->komentar->find('id_komentar', $kid);
+      $artikel = $this->artikel->all();
+      return $this->render('dashboard/editKomentar', ['data'=>$result,'artikel'=>$artikel]);
+   }
+
+   public function komentarUpdate($id,$kid){
+      $result = $this->komentar->update('id_komentar', $kid, $_POST);
+      if($result){
+         $this->render('dashboard/editSuccessKomentar', ['']);
+      }
+   }
+
+
+   public function deleteKategori($id){
+      $result = $this->kategori->delete('id_kategori', $id);
+      return $this->render('/dashboard/admin/deleteKategori');
+   }
+
+   
+
 }

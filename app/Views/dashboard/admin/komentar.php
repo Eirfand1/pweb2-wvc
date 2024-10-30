@@ -12,9 +12,9 @@
    <div class="mx-auto min-h-screen flex">
 
    <?php require_once './components/admin/sidebar.php' ?>
-      <div class="w-4/5 ">
+      <div class="w-5/6 ">
    <?php require_once './components/navDashboard.php' ?>
-      <div class="bg-gray-100 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
+      <div class="bg-gray-100  p-6  rounded-sm overflow-hidden">
         <h1 class="text-2xl">List Komentar</h1>
         <table id="myTable" class="table">
          <thead>
@@ -36,8 +36,8 @@
                   <td><?=$row['tanggal_update']?></td>
                   <td><?=$row['artikel_id']?></td>
                   <td>
-                     <a href="" class="btn btn-sm btn-error">Hapus</a>
-                     <a href="" class="btn btn-sm btn-info">Edit</a>
+
+                     <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_komentar']?>)">Hapus</button>
                   </td>
                </tr>
             <?php endforeach?>
@@ -46,5 +46,25 @@
       </div>
       </div>
    </div>
+
+   <script>
+      function confirmDelete(id) {
+         Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data ini akan dihapus!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal'
+         }).then((result) => {
+            if (result.isConfirmed) {
+               // Redirect to the delete URL
+               window.location.href = '/dashboard/admin/komentar/' + id;
+            }
+         });
+      }
+   </script>
 </body>
 </html>
