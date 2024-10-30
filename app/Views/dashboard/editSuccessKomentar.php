@@ -4,12 +4,7 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 
 echo "<script>
-
- Swal.fire({
-  title: 'Good job!',
-  text: 'Komentar telah dihapus',
-  icon: 'success'
-});
+  alert('Data Komentar berhasil di edit')
   location.href = '/dashboard/{$dashboard_id}/komentar'
 
 </script>";

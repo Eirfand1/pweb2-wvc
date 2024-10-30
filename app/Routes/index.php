@@ -49,4 +49,13 @@ $router->post('/dashboard/admin/kategori/edit/{id}', DashboardController::class,
 $router->get('/dashboard/admin/kategori/{id}', DashboardController::class, 'deleteKategori');
 
 $router->get('/dashboard/admin/kategori', DashboardController::class, 'listKategoriAdmin');
+
+//CRUD KOMENTAR
+$router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
+$router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
+$router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
+$router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
+$router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
+
+$router->get('/dashboard/admin/komentar/{kid}', DashboardController::class, 'deleteKomentarAdmin');
 $router->dispatch();

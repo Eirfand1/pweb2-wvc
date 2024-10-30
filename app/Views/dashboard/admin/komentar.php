@@ -36,6 +36,7 @@
                   <td><?=$row['tanggal_update']?></td>
                   <td><?=$row['artikel_id']?></td>
                   <td>
+
                      <button class="btn btn-sm btn-error btn-outline" onclick="confirmDelete(<?=$row['id_komentar']?>)">Hapus</button>
                   </td>
                </tr>
