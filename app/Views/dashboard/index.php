@@ -11,10 +11,10 @@
 <body class="min-h-screen" data-theme="garden">
    <div class="flex min-h-screen">
       <?php require_once './components/sideDashboard.php' ?>
-      <div class="w-4/5">
+      <div class="w-5/6">
       <?php require_once './components/navDashboard.php' ?>
          <div class="mx-auto">
-            <div class="bg-gray-100 min-h-screen border border-dotted border-black  p-6 mx-auto rounded-sm overflow-hidden">
+            <div class="bg-gray-100 min-h-screen  border-black  p-6 mx-auto rounded-sm overflow-hidden">
                <h1 class="text-2xl">Halo <?=$detail['nama']?></h1>
                <h1>Selamat datang di dashboard</h1> 
             </div>

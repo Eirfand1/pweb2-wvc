@@ -12,11 +12,11 @@
    <div class="mx-auto min-h-screen flex">
 
    <?php require_once './components/admin/sidebar.php' ?>
-      <div class="w-4/5 ">
+      <div class="w-5/6 ">
    <?php require_once './components/navDashboard.php' ?>
-      <div class="bg-gray-100 border border-dotted border-black  p-6  rounded-sm overflow-hidden">
+      <div class=" m-4 rounded bg-gray-50  p-6  rounded-sm overflow-hidden">
         <h1 class="text-2xl">List Komentar</h1>
-        <table id="myTable" class="table">
+        <table id="myTable" class="display border border-gray-400">
          <thead>
             <tr>
                <td>No</td>

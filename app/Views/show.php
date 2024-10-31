@@ -8,6 +8,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title><?= $detail['judul'] ?></title>
 </head>
+
 <body class="min-h-screen" data-theme="garden">
    <?php require_once './components/navbar.php' ?>
 
