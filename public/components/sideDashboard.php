@@ -4,7 +4,7 @@ $url_parts = explode('/', $current_url);
 $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
 ?>
 
-<div class="w-1/5 p-2 bg-secondary-content text-gray-800">
+<div class="w-1/6 p-2 bg-secondary-content text-gray-800">
     <ul class="menu menu-vertical gap-2">
       <li>
          <a href="/" class="text-2xl btn-ghost text-center mb-2 font-semibold"> Kelompok 4</a>  
