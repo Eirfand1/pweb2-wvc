@@ -28,6 +28,9 @@ $router->post('/dashboard/{id}/artikel/edit/{aid}', DashboardController::class, 
 //mendefinisikan nama url dan class dan method controller yang akan digunakan
 //SEMUA TAMPILAN
 $router->get('/dashboard/{id}/penulis', DashboardController::class, "listPenulis");
+
+//DELETE KOMENTAR (ADMIN)
+$router->get('/dashboard/admin/komentar/{id}', DashboardController::class, "deleteKomentarAdmin");
 $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
 
 // $router->get('/dashboard/{id}/kategori', DashboardController::class, "listKategori");
@@ -49,5 +52,20 @@ $router->post('/dashboard/admin/kategori/tambah', DashboardController::class, 'k
 $router->get('/dashboard/admin/kategori/{id}', DashboardController::class, 'deleteKategori');
 $router->get('/dashboard/admin/kategori/edit/{id}', DashboardController::class,'editPageKategori');
 $router->post('/dashboard/admin/kategori/edit/{id}', DashboardController::class,'kategoriUpdate');
+
+$router->get('/dashboard/admin/kategori/edit/{id}', DashboardController::class, 'editPageKategori');
+$router->post('/dashboard/admin/kategori/edit/{id}', DashboardController::class, 'kategoriUpdate');
+$router->get('/dashboard/admin/kategori/{id}', DashboardController::class, 'deleteKategori');
+
+
 $router->get('/dashboard/admin/kategori', DashboardController::class, 'listKategoriAdmin');
+
+//CRUD KOMENTAR
+$router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
+$router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
+$router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
+$router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
+$router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
+
+$router->get('/dashboard/admin/komentar/{kid}', DashboardController::class, 'deleteKomentarAdmin');
 $router->dispatch();

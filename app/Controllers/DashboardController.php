@@ -103,6 +103,12 @@ class DashboardController extends Controller {
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
    }
+
+   public function deleteKomentarAdmin($id){
+      $result = $this->komentar->delete('id_komentar', $id);
+      return $this->render('/dashboard/admin/deleteKomentar');
+   }
+
    public function listKategoriAdmin(){
       $result = $this->kategori->all();
       return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
@@ -121,6 +127,11 @@ class DashboardController extends Controller {
       return $this->render('/dashboard/admin/artikel', ['data'=> $result]);
    }
 
+   public function deleteArtikel($id){
+      $result = $this->artikel->delete('id_artikel', $id);
+      return $this->render('/dashboard/admin/deleteArtikel');
+   }
+
    public function penulisStore(){
       $result = $this->penulis->insert($_POST);
       if($result){
@@ -136,9 +147,14 @@ class DashboardController extends Controller {
    }
 
    public function deletePenulis($id){
+      // Hapus semua artikel yang ditulis oleh penulis ini
+      $this->artikel->delete('penulis_id', $id);
+  
+      // Hapus data penulis
       $result = $this->penulis->delete('id_penulis', $id);
       return $this->render('/dashboard/admin/deletePenulis');
-   }
+  }
+  
 
    public function editPagePenulis($id){ 
       $result = $this->penulis->find('id_penulis', $id);
@@ -166,14 +182,48 @@ class DashboardController extends Controller {
       }
    }
 
-   public function deleteKategori($id){
+   public function deleteKategori($id) {
+      // Cek apakah kategori sedang digunakan oleh artikel
+      $artikel = $this->artikel->find('kategori_id', $id);
+  
+      // Jika kategori sedang digunakan oleh artikel
+      if ($artikel && $artikel->num_rows > 0) {
+         //  echo json_encode([
+         //      'status' => 'error',
+         //      'message' => 'Kategori tidak dapat dihapus karena sedang digunakan oleh artikel.'
+         //  ]);
+
+          echo "<script>
+          alert('kategori sedang digunakan')
+          location.href= '/dashboard/admin/kategori'
+          </script>";
+         return;
+          //return $this->render('/dashboard/admin/kategori');
+      }
+  
+      // Hapus kategori jika tidak digunakan
       $result = $this->kategori->delete("id_kategori", $id);
-      return $this->render("/dashboard/admin/deleteKategori");
-   }
+  
+      if ($result) {
+          echo json_encode([
+              'status' => 'success',
+              'message' => 'Kategori berhasil dihapus.'
+          ]);
+      } else {
+          echo json_encode([
+              'status' => 'error',
+              'message' => 'Gagal menghapus kategori.'
+          ]);
+      }
+      return $this->render('/dashboard/admin/kategori');
+  }
+  
+  
 
    public function editPageKategori($id){
       $result = $this->kategori->find('id_kategori', $id);
-      return $this->render('dashboard/admin/editPageKategori', ['kategori'=>$result]);
+      $kategori= $this->kategori->all();
+      return $this->render('dashboard/admin/editPageKategori', ['data'=>$result, 'kategori'=>$kategori]);
    }
 
    public function kategoriUpdate($id){
@@ -182,4 +232,42 @@ class DashboardController extends Controller {
          $this->render('dashboard/admin/editSuccesKategori', ['']);
       }
    }
+
+
+   public function insertPageKomentar($id){
+      $result = $this->komentar->find('artikel_id', $id);
+      $artikel = $this->artikel->all();
+      $username = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/insertKomentar',['artikel'=>$artikel, 'uid'=>$username->fetch_assoc()]);
+   }
+
+   public function komentarStore($id){
+      $result = $this->komentar->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Komentar berhasil di tambah')
+         location.href = '/dashboard/{$id}/komentar' </script>" 
+        ;
+      }
+   }
+
+   public function deleteKomentar($id,$kid){
+      $result = $this->komentar->delete('id_komentar', id: $kid);
+      return $this->render("/dashboard/deleteKomentar");
+   }
+
+   public function editPageKomentar($id,$kid){
+      $result = $this->komentar->find('id_komentar', $kid);
+      $artikel = $this->artikel->all();
+      return $this->render('dashboard/editKomentar', ['data'=>$result,'artikel'=>$artikel]);
+   }
+
+   public function komentarUpdate($id,$kid){
+      $result = $this->komentar->update('id_komentar', $kid, $_POST);
+      if($result){
+         $this->render('dashboard/editSuccessKomentar', ['']);
+      }
+   }
+
+
 }
