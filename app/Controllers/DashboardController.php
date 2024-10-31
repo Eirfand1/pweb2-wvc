@@ -98,6 +98,7 @@ class DashboardController extends Controller {
       return $this->render(view: 'dashboard/kategori', data: ['kategori' => $result]);
    }
 
+
    public function listKomentarAdmin(){
       $result = $this->komentar->all();
       return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
@@ -146,9 +147,14 @@ class DashboardController extends Controller {
    }
 
    public function deletePenulis($id){
+      // Hapus semua artikel yang ditulis oleh penulis ini
+      $this->artikel->delete('penulis_id', $id);
+  
+      // Hapus data penulis
       $result = $this->penulis->delete('id_penulis', $id);
       return $this->render('/dashboard/admin/deletePenulis');
-   }
+  }
+  
 
    public function editPagePenulis($id){ 
       $result = $this->penulis->find('id_penulis', $id);
@@ -176,9 +182,48 @@ class DashboardController extends Controller {
       }
    }
 
+   public function deleteKategori($id) {
+      // Cek apakah kategori sedang digunakan oleh artikel
+      $artikel = $this->artikel->find('kategori_id', $id);
+  
+      // Jika kategori sedang digunakan oleh artikel
+      if ($artikel && $artikel->num_rows > 0) {
+         //  echo json_encode([
+         //      'status' => 'error',
+         //      'message' => 'Kategori tidak dapat dihapus karena sedang digunakan oleh artikel.'
+         //  ]);
+
+          echo "<script>
+          alert('kategori sedang digunakan')
+          location.href= '/dashboard/admin/kategori'
+          </script>";
+         return;
+          //return $this->render('/dashboard/admin/kategori');
+      }
+  
+      // Hapus kategori jika tidak digunakan
+      $result = $this->kategori->delete("id_kategori", $id);
+  
+      if ($result) {
+          echo json_encode([
+              'status' => 'success',
+              'message' => 'Kategori berhasil dihapus.'
+          ]);
+      } else {
+          echo json_encode([
+              'status' => 'error',
+              'message' => 'Gagal menghapus kategori.'
+          ]);
+      }
+      return $this->render('/dashboard/admin/kategori');
+  }
+  
+  
+
    public function editPageKategori($id){
       $result = $this->kategori->find('id_kategori', $id);
-      return $this->render('dashboard/admin/editKategori', ['data'=>$result]);
+      $kategori= $this->kategori->all();
+      return $this->render('dashboard/admin/editPageKategori', ['data'=>$result, 'kategori'=>$kategori]);
    }
 
    public function kategoriUpdate($id){
@@ -224,12 +269,5 @@ class DashboardController extends Controller {
       }
    }
 
-
-   public function deleteKategori($id){
-      $result = $this->kategori->delete('id_kategori', $id);
-      return $this->render('/dashboard/admin/deleteKategori');
-   }
-
-   
 
 }
