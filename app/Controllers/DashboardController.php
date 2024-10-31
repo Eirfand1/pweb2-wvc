@@ -205,17 +205,21 @@ class DashboardController extends Controller {
       $result = $this->kategori->delete("id_kategori", $id);
   
       if ($result) {
-          echo json_encode([
-              'status' => 'success',
-              'message' => 'Kategori berhasil dihapus.'
-          ]);
-      } else {
-          echo json_encode([
-              'status' => 'error',
-              'message' => 'Gagal menghapus kategori.'
-          ]);
+          //echo json_encode([
+              //'status' => 'success',
+              //'message' => 'Kategori berhasil dihapus.'
+          //]);
+      //} else {
+          //echo json_encode([
+              //'status' => 'error',
+              //'message' => 'Gagal menghapus kategori.'
+          //]);
+          echo "<script>
+          alert('kategori berhasil dihapus')
+          location.href= '/dashboard/admin/kategori'
+          </script>";
+         return;
       }
-      return $this->render('/dashboard/admin/kategori');
   }
   
   
