@@ -4,12 +4,15 @@ use App\Controller;
 use App\Models\Artikel;
 use App\Models\Kategori;
 use App\Models\Komentar;
+use App\Models\Penulis;
+use LDAP\Result;
 
 class ArtikelController extends Controller {
-   private $artikel, $kategori, $komentar;
+   private $artikel, $kategori, $komentar, $penulis;
    public function __construct(){
       $this->artikel= new Artikel();
       $this->komentar = new Komentar();
+      $this->penulis = new Penulis();
    }
    public function index(){
       $result = $this->artikel
@@ -28,10 +31,18 @@ class ArtikelController extends Controller {
                 ->where('artikel.id_artikel', $id)
                 ->get();
       $komentar = $this->komentar->find('artikel_id',$id);
-
+      $penulis = $this->penulis->all();
       return $this->render('show',
        ['data'=>$result,
-              'komentar'=>$komentar]);
+              'komentar'=>$komentar, 'penulis'=>$penulis, 'aid'=>$id]);
+   }
+
+   public function komentarStore($id) {
+      $result = $this->komentar->insert($_POST);
+
+      if($result){
+         header("Location:/{$id}");
+      }
    }
 
 }

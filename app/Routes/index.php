@@ -10,6 +10,7 @@ $router = new Router();
 
 $router->get('/', ArtikelController::class, 'index');
 $router->get('/{id}',ArtikelController::class, 'show');
+$router->post('/{id}',ArtikelController::class, 'komentarStore');
 $router->get('/dashboard/admin', DashboardController::class, 'indexAdmin');
 $router->get('/dashboard/admin/artikel', DashboardController::class, 'listArtikelAdmin');
 $router->get('/dashboard/admin/penulis', DashboardController::class, 'listPenulis');
