@@ -10,7 +10,7 @@
 <body class="min-h-screen" data-theme="garden">
    <div class="flex min-h-screen">
 
-      <?php require_once './components/sideDashboard.php' ?>
+      <?php require_once './components/admin/sidebar.php' ?>
 
       <div class="w-5/6 ">
    <?php require_once './components/navDashboard.php' ?>
