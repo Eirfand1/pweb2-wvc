@@ -6,7 +6,7 @@ $data=$data->fetch_assoc();
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Tambah Penulis</title>
+   <title>Edit Kategori</title>
 </head>
 <body class="min-h-screen" data-theme="garden">
    <div class="flex min-h-screen">
