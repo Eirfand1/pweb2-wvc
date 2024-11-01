@@ -18,7 +18,22 @@ npm run dev
 
 
 # Documentation Manajemen Artikel
+Struktur
 
+
+├── Config/
+│   └── Database.php
+├── Models/
+│   ├── Model.php
+│   └── Penulis.php  
+├── Controllers/
+│   └── DashboardController.php
+└── Views/
+    └── dashboard/admin/
+        ├── penulis.php
+        ├── insertPenulis.php
+        ├── editPenulis.php
+        └── deletePenulis.php
 
 ### Config.php
 Koneksi ke database mysqli
@@ -477,13 +492,13 @@ echo "<script>
 </script>";
 echo  "Haruse berhasil sih cok";
 ?>
-`
+```
 
 
 ## CRUD Kategori
 ### CONFIG (database.php)
 
-```
+```php
 <?php 
 
 //Koneksi ke database pweb2kel4
@@ -504,6 +519,7 @@ class Database{
 
   }
 } 
+
 ```
 1. Kode PHP di atas mendefinisikan kelas 'Database' di namespace 'Config'. Kelas ini digunakan untuk terhubung ke database 'basdeat2_klp4' di server 'mdi.my.id'.
 2. Di dalam kelas ini terdapat construktor (`__construct`) yang secara otomatis dieksekusi ketika objek 'Database' dibuat. Construktor ini menyimpan informasi yang diperlukan untuk terhubung, seperti nama host ('$host'), nama database ('$db'), nama pengguna ('$user'), dan kata sandi ('$pass') .
@@ -514,7 +530,7 @@ class Database{
 ### Models
 #### Model.php
 
-```
+```php
 <?php
 //mendefinisikan nama class folder agar bisa dipakai ooleh file lain
 namespace App\Models;
