@@ -1032,780 +1032,772 @@ $router->dispatch();
 
 
 
-## CRUD Komentar (Mode Admin dan Pengguna)
-Pada mode admin hanya bisa menghapus data komentar saja.
-Sedangkan mode pengguna bisa tambah,hapus,edit.
-### Config.php
-Koneksi ke database mysqli
-```
-<?php 
-namespace Config;
-use mysqli;
-use mysqli_sql_exception;
-class Database{
-   protected $conn;
-   public function __construct() {
-    $host = 'mdi.my.id';
-    $db   = 'basdeat2_klp4';
-    $user = 'basdeat2_usr4';
-    $pass = '7.8fBotqbm&C~*.@#h';
-
-
-    $this->conn = new mysqli($host, $user, $pass, $db);
-    if($this->conn->connect_error) die('Koneksi error karena : '. $this->conn->connect_error);
-
-  }
-} 
-```
-Kode di atas adalah kelas `Database` dalam PHP yang digunakan untuk mengatur koneksi ke database MySQL menggunakan ekstensi `mysqli`.
-
-- `namespace Config;`: Mendefinisikan namespace `Config` untuk kelas ini, sehingga kelas ini dapat dipanggil dengan `Config\Database`.
-- `use mysqli;` dan `use mysqli_sql_exception;`: Mengimpor kelas `mysqli` untuk koneksi dan `mysqli_sql_exception` untuk menangani error khusus MySQLi (meskipun `mysqli_sql_exception` tidak digunakan dalam kode ini).
-- `class Database{ ... }`: Mendeklarasikan kelas `Database`.
-- `protected $conn;`: Mendefinisikan properti `$conn` untuk menyimpan objek koneksi ke database.
-- `public function __construct() { ... }`: Mendefinisikan konstruktor yang otomatis dijalankan saat objek dibuat.
-- Dalam konstruktor:
-  - Variabel `host`, `db`, `user`, dan `pass` menyimpan informasi koneksi database, seperti alamat host, nama database, username, dan password.
-  - `$this->conn = new mysqli($host, $user, $pass, $db);`: Membuat koneksi ke database menggunakan data di atas.
-  - `if($this->conn->connect_error) die('Koneksi error karena : '. $this->conn->connect_error);`: Memeriksa apakah terjadi error saat koneksi. Jika ya, tampilkan pesan error dan hentikan eksekusi kode.
-
-Kode ini berfungsi untuk memastikan koneksi ke database berhasil dibuat saat objek `Database` diinisialisasi.
-
-### Models
-#### Model.php
-```
-<?php
-//mendefinisikan nama class folder agar bisa dipakai ooleh file lain
-namespace App\Models;
-use Config\Database;
-
-//class turunan dari database
-class Model extends Database {
-    protected $table;
-    protected $select = "*";
-    protected $joins = [];
-    protected $where = [];
-    
-    //memanggil construct dari parent
-    public function __construct() {
-        parent::__construct();
-    }
-
-    //method insert
-    public function insert($data) {
-        $columns = implode(", ", array_keys($data));
-        $values = "'" . implode("', '", array_values($data)) . "'";
-        $query = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values})";
-        return $this->conn->query($query) or die("Error: " . $this->conn->error);
-    }
-
-    //method delete
-    public function delete($column,$id) {
-        $query = "DELETE FROM {$this->table} WHERE {$column}='{$id}'";
-        return $this->conn->query($query) or die("Error: " . $this->conn->error);
-    }
-
-    public function all() {
-        $query = "SELECT * FROM {$this->table}";
-        return $this->conn->query($query);
-    }
-
-    public function find($column,$id) {
-        $query = "SELECT * FROM {$this->table} WHERE {$column}='{$id}'";
-        $result = $this->conn->query($query);
-        return $result;
-    }
-
-    //method update
-    public function update($column,$id, $data) {
-        $updates = [];
-        foreach($data as $key => $value) {
-            $updates[] = "{$key}='{$value}'";
-        }
-        $updates = implode(", ", $updates);
-        $query = "UPDATE {$this->table} SET {$updates} WHERE {$column}='{$id}'";
-        return $this->conn->query($query) or die("Error: " . $this->conn->error);
-    }
-
-    //method mencari data
-    public function where($column, $value) {
-        $this->where[] = "{$column}='{$value}'";
-        return $this;
-    }
-
-    //method memilih
-    public function select($columns) {
-        if (is_array($columns)) {
-            $this->select = implode(', ', $columns);
-        } else {
-            $this->select = $columns;
-        }
-        return $this;
-    }
-
-    //method menggabungkan table
-    public function join($table, $first, $operator, $second, $type = 'INNER') {
-        $this->joins[] = sprintf(' %s JOIN %s ON %s %s %s', 
-            $type, $table, $first, $operator, $second
-        );
-        return $this;
-    }
- 
-
-    public function leftJoin($table, $first, $operator, $second) {
-        return $this->join($table, $first, $operator, $second, 'LEFT');
-    }
-
-    public function rightJoin($table, $first, $operator, $second) {
-        return $this->join($table, $first, $operator, $second, 'RIGHT');
-    }
-
-    //method ambil data 
-    public function get() {
-        $query = "SELECT {$this->select} FROM {$this->table}";
-        
-        if (!empty($this->joins)) {
-            $query .= implode(' ', $this->joins);
-        }
-
-        if (!empty($this->where)) {
-            $query .= ' WHERE ' . implode(' AND ', $this->where);
-        }
-
-        $this->select = "*";
-        $this->joins = [];
-        $this->where = [];
-
-        return $this->conn->query($query);
-    } 
-}
-```
-Kode ini mendefinisikan kelas `Model` yang berfungsi sebagai model dasar untuk operasi CRUD di database menggunakan konsep OOP dalam PHP. Kelas ini merupakan turunan dari `Database` sehingga otomatis mewarisi koneksi ke database.
-
-- **Namespace dan Inheritance**: 
-  - `namespace App\Models;` menentukan lokasi `Model` dalam namespace `App\Models`.
-  - `class Model extends Database` mewarisi semua metode dan properti dari kelas `Database`.
-
-- **Properti Utama**:
-  - `$table`: Menyimpan nama tabel yang akan diakses.
-  - `$select`, `$joins`, dan `$where`: Menyimpan bagian query SQL seperti kolom yang dipilih (`select`), kondisi penggabungan tabel (`joins`), dan kondisi pencarian (`where`).
-
-- **Metode CRUD**:
-  - `insert($data)`: Menambahkan data baru ke tabel berdasarkan array `data`.
-  - `delete($column, $id)`: Menghapus data berdasarkan kolom dan id tertentu.
-  - `update($column, $id, $data)`: Memperbarui data berdasarkan kolom, id, dan array data baru.
-  - `all()`: Mengambil semua data dari tabel.
-  - `find($column, $id)`: Mengambil satu data berdasarkan kolom dan id.
-
-- **Query Builder**:
-  - `where($column, $value)`: Menambahkan kondisi pencarian.
-  - `select($columns)`: Memilih kolom spesifik untuk diambil dari tabel.
-  - `join`, `leftJoin`, `rightJoin`: Menggabungkan tabel lain dalam query dengan berbagai tipe join (`INNER`, `LEFT`, `RIGHT`).
-  - `get()`: Menyusun dan mengeksekusi query berdasarkan kondisi `select`, `joins`, dan `where`.
-
-Metode-metode ini dirancang untuk mempermudah operasi query yang sering digunakan, sehingga kode menjadi lebih rapi dan fleksibel.
-
-#### Komentar.php
-```
-<?php
-namespace App\Models;
-class Komentar extends Model{
-   public function __construct()
-   {
-    parent :: __construct();  
-    $this->table = "komentar";
-   }
-}
-?>
-```
-
-Kode ini mendefinisikan kelas `Komentar` yang merupakan turunan dari kelas `Model` dalam namespace `App\Models`.
-
-- **Namespace dan Inheritance**:
-  - `namespace App\Models;` menetapkan lokasi `Komentar` dalam namespace `App\Models`.
-  - `class Komentar extends Model` menyatakan bahwa `Komentar` mewarisi semua metode dan properti dari kelas `Model`, termasuk koneksi database dan fungsi CRUD.
-
-- **Konstruktor**:
-  - `public function __construct()` mendefinisikan konstruktor untuk kelas `Komentar`.
-  - `parent::__construct();` memanggil konstruktor dari kelas `Model`, memastikan koneksi database siap digunakan.
-  - `$this->table = "komentar";` menetapkan nama tabel yang akan digunakan oleh model ini, yaitu tabel `komentar`.
-
-Kelas `Komentar` ini siap untuk menjalankan operasi CRUD di tabel `komentar` menggunakan fungsi-fungsi yang diwarisi dari `Model`.
-
-### Controllers
-#### DashboardController.php
-```
-<?php 
-
-namespace App\Controllers;
-//menggunakan file lain
-use App\Controller;
-use App\Models\Penulis;
-use App\Models\Artikel;
-use App\Models\Komentar;
-use App\Models\Kategori;
-
-//class turunan dari controller
-class DashboardController extends Controller {
-   private $penulis, $artikel, $userId, $komentar, $kategori;
-   public function __construct(){
-      $this->penulis = new Penulis();
-      //instansiasi model artikel
-      $this->artikel = new Artikel();
-      $this->komentar = new Komentar();
-      $this->kategori = new Kategori();
-   }
-   public function index($id){
-      $user = $this->penulis->find('id_penulis',$id);
-      $this->userId = $id;
-      return $this->render(
-         "dashboard/index",
-         ['user'=> $user]
-      );
-   }
-
-   public function listKomentar($id){
-      $result = $this->komentar->all();
-      return $this->render(view: 'dashboard/komentar', data: ['data' => $result]);
-
-   }
-
-   public function listKomentarAdmin(){
-      $result = $this->komentar->all();
-      return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
-   }
-
-   public function deleteKomentarAdmin($id){
-      $result = $this->komentar->delete('id_komentar', $id);
-      return $this->render('/dashboard/admin/deleteKomentar');
-   }
-
-   public function listKategoriAdmin(){
-      $result = $this->kategori->all();
-      return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
-   }
-
-   public function insertPageKomentar($id){
-      $result = $this->komentar->find('artikel_id', $id);
-      $artikel = $this->artikel->all();
-      $username = $this->penulis->find('id_penulis', $id);
-      return $this->render('dashboard/insertKomentar',['artikel'=>$artikel, 'uid'=>$username->fetch_assoc()]);
-   }
-
-   public function komentarStore($id){
-      $result = $this->komentar->insert($_POST);
-      if($result){
-         echo "<script>
-         alert('Data Komentar berhasil di tambah')
-         location.href = '/dashboard/{$id}/komentar' </script>" 
-        ;
-      }
-   }
-
-   public function deleteKomentar($id,$kid){
-      $result = $this->komentar->delete('id_komentar', id: $kid);
-      return $this->render("/dashboard/deleteKomentar");
-   }
-
-   public function editPageKomentar($id,$kid){
-      $result = $this->komentar->find('id_komentar', $kid);
-      $artikel = $this->artikel->all();
-      return $this->render('dashboard/editKomentar',['data'=>$result 'artikel'=>$artikel]);
-   }
-
-   public function komentarUpdate($id,$kid){
-      $result = $this->komentar->update('id_komentar', $kid, $_POST);
-      if($result){
-         $this->render('dashboard/editSuccessKomentar', ['']);
-      }
-   }
-}
-```
-Kode PHP di atas adalah definisi dari `DashboardController`, sebuah class yang digunakan untuk mengelola halaman dashboard di aplikasi. Class ini merupakan turunan dari `Controller` dan mengatur interaksi dengan berbagai model, yaitu `Penulis`, `Artikel`, `Komentar`, dan `Kategori`. Berikut penjelasan setiap method dalam class ini:
-
-1. **`__construct()`**: 
-   Constructor yang menginisialisasi objek untuk setiap model (`Penulis`, `Artikel`, `Komentar`, `Kategori`) agar dapat digunakan dalam method-method lain di `DashboardController`.
-
-2. **`index($id)`**:
-   Menampilkan halaman dashboard utama untuk penulis berdasarkan `id` yang diterima sebagai parameter. Method ini mengambil data penulis dan meneruskannya ke view `dashboard/index`.
-tikel Id</td>
-               <td>Aksi</td>irim menggunakan metode `POST`.
-
-5. **Penutupan Elemen HTML**:
-   ```html
-   </div>
-   </div>
-   </div>
-   </body>engguna untuk menambah komentar baru dengan memilih artikel dan mengisi informasi komentar. Data username ditampilkan secara otomatis dan tidak bisa diubah.
-
-### Routes
-#### Index.php
-```
-<?php
-
-use App\Controllers\ArtikelController;
-use App\Controllers\DashboardController;
-use App\Router;
-
-$router = new Router();
-
-//DELETE KOMENTAR (ADMIN)
-$router->get('/dashboard/admin/komentar/{id}', DashboardController::class, "deleteKomentarAdmin");
-$router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
-
-//CRUD KOMENTAR
-$router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
-$router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
-$router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
-$router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
-$router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
-
-$router->get('/dashboard/admin/komentar/{kid}', DashboardController::class, 'deleteKomentarAdmin');
-$router->dispatch();
-```
-Kode ini adalah konfigurasi routing untuk mengelola operasi komentar di aplikasi. Berikut penjelasan singkat dari setiap bagian:
-
-1. **Inisialisasi Router**:
-   ```php
-   $router = new Router();
-   ```
-   - Membuat instance router untuk menangani rute HTTP.
-
-2. **Rute Penghapusan Komentar oleh Admin**:
-   ```php
-   $router->get('/dashboard/admin/komentar/{id}', DashboardController::class, "deleteKomentarAdmin");
-   ```
-   - Mengarahkan permintaan `GET` ke `deleteKomentarAdmin` dalam `DashboardController` untuk menghapus komentar sebagai admin.
-
-3. **Rute Menampilkan Komentar**:
-   ```php
-   $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
-   ```
-   - Menampilkan daftar komentar berdasarkan `id` dashboard.
-
-4. **Rute CRUD Komentar**:
-   - **Tambah Komentar**:
-     ```php
-     $router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
-     $router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
-     ```
-     - Menampilkan halaman tambah komentar (GET) dan menyimpan komentar baru (POST).
-
-   - **Hapus Komentar**:
-     ```php
-     $router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
-     ```
-     - Menghapus komentar berdasarkan ID komentar (`kid`).
-
-   - **Edit Komentar**:
-     ```php
-     $router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
-     $router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
-     ```
-     - Menampilkan halaman edit komentar (GET) dan memperbarui komentar (POST).
-
-5. **Menjalankan Router**:
-   ```php
-   $router->dispatch();
-   ```
-   - Memproses permintaan sesuai dengan rute yang telah ditentukan. 
-
-Kode ini mengatur rute untuk mengelola komentar, termasuk menambah, mengedit, dan menghapus komentar di dashboard.
-
-   </html>truktur halaman.
-
-Secara keseluruhan, halaman ini memungkinkan p
-   ```
-   - Menutup elemen yang dibuka sebelumnya, menyelesaikan s
-            </tr>
-         </thead>
-              mengandung input untuk `username` (readonly), `isi komentar`, dan dropdown untuk memilih `artikel_id`.
-   - Dropdown menampilkan semua artikel yang diambil dari variabel `$artikel`, setiap opsi memiliki `id_artikel` sebagai nilai dan `judul` sebagai tampilan.
-   - Ketika tombol "Tambah Komentar" ditekan, data akan dik  <div class="flex flex-col gap-2">
-                  <label for="isi">Isi Komentar</label>
-                  <input type="text" name="isi_komentar" id="" class="input input-bordered">
-               </div>
-               <div class="flex flex-col gap-2">
-                  <label for="id">Artikel ID</label>
-                  <select name="artikel_id" id="" class="select select-bordered">
-                     <?php foreach($artikel as $row) : ?>
-                        <option value="<?=$row['id_artikel']?>"><?=$row['judul']?></option>
-                     <?php endforeach?>
-                  </select>
-               </div>
-               <div>2">
-         <label for="isi">Isi Komentar</label>
-         <input type="text" name="isi_komentar" class="input input-bordered">
-      </div>
-      <div class="flex flex-col gap-2">
-         <label for="id">Artikel ID</label>
-         <select name="artikel_id" class="select select-bordered">
-            <?php foreach($artikel as $row) : ?>
-               <option value="<?=$row['id_artikel']?>"><?=$row['judul']?></option>
-            <?php endforeach?>
-         </select>
-      </div>
-      <div>
-         <button type="submit" class="btn btn-primary">Tambah Komentar</button>
-      </div>
-   </form>
-   ```
-   - Form ini
-                  <button type="submit" class="btn btn-primary">Tambah Komentar</button>
-               </div>
-            </form> 
-         </div>
-      </div>
-      </div>
-      
-   </div>
-   
-</body>
-</html>
-```
-Kode ini adalah halaman untuk menambah komentar dalam aplikasi berbasis web. Berikut adalah penjelasan singkat mengenai setiap bagian:
-tml
-   <form method="post" class="grid gap-4">
-      <div class="flex flex-col gap-2">
-         <label for="isi">Username</label>
-         <input type="text" name="username" class="input input-bordered" value="<?=$uid['nama']?>" readonly>
-      </div>
-      <div class="flex flex-col gap-
-1. **Deklarasi PHP**:
-   ```php
-   <?php
-   ?>
-   ```html
-   <body class="min-h-screen" data-theme="garden">
-      <div class="flex min-h-screen">
-         <?php require_once './components/sideDashboard.php' ?>
-         <div class="w-5/6 ">
-            <?php require_once './components/navDashboard.php' ?>
-   ```
-   - Membuat struktur tampilan dengan komponen sidebar dan navigasi.
-
-4. **Formulir untuk Menambah Komentar**:
-   ```h  ```
-   - Blok PHP kosong, bisa digunakan untuk logika atau pengambilan data, tetapi saat ini tidak ada kode di dalamnya.
-
-2. **Struktur HTML Dasar**:
-   ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Tambah Komentar</title>
-   </head>
-   ```
-   - Menentukan tipe dokumen, bahasa, serta meta tag untuk pengaturan karakter dan responsif.
-
-3. **Tata Letak Halaman**:
-  <tbody>
-            <?php $no=1; foreach($data as $row) :?>
-               <tr>
-                  <td><?=$no++?></td>
-                  <td><?=$row['username']?></td>
-                  <td><?=$row['isi_komentar']?></td>
-                  <td><?=$row['tanggal_update']?></td>
-                  <td><?=$row['artikel_id']?></td>
-                  <td>);
-   $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
-   ```
-   - Variabel `$current_url` mengambil URL halaman saat iniI_ASSOC);?>
-       i adalah halaman untuk menambah komentar dalam aplikasi berbasis web. Berikut penjelasan singkat dan jelas mengenai setiap bagian:
-isi">Username</label>
-                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$uid['nama']?>" readonly>
-               </div>
-        
-1. **Mengambil Data Komentar**:
-   ```php
-   $komentar = $data->fetch_assoc();
-   ```
-   - Mengambil satu baris data komentar dari objek `$data` (biasanya hasil dari query basis data) dan menyimpannya dalam variabel `$komentar`.
-
-2. **Struktur HTML Dasar**:
-   ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <a charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Tambah Komentar</title>
-</head>
-<body class="min-h-screen" data-theme="garden">
-   <div class="flex min-h-screen">
-
-      <?php require_once './components/sideDashboard.php' ?>
-
-      <div class="w-5/6 ">
-   <?php require_once './components/navDashboard.php' ?>
-      <div class="mx-auto ">
-         <div class=" m-4 rounded bg-gray-50 min-h-screen p-6  overflow-hidden">
-
-            <form method="post" class="grid gap-4">
-                <div class="flex flex-col gap-2">
-                  <label for="meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Tambah Komentar</title>
-   </head>
-   ```
-   - Menetapkan jenis dokumen, bahasa, dan meta tag untuk pengaturan karakter dan responsif.
-
-3. **Tata Letak Halaman**:
-   ```html
-   <body class="min-h-screen" data-theme="garden">
-      <div class="flex min-h-screen">
-         <?php require_once './components/sideDashboard.php' ?>
-         <div class="w-5/6 ">
-            <?php require_once './components/navDashboard.php' ?>
-   ```
-   - Membuat struktur dasar untuk tampilan dengan menggunakan komponen sidebar dan navigasi.
-
-4. **Formulir untuk Menambah Komentar**:
-   ```html
-   <form method="post" class="grid gap-4">
-      <div class="flex flex-col gap-2">
-         <label/insertKomentar.php
-```
-<?php
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <met for="isi">Username</label>
-         <input type="text" name="username" class="input input-bordered" value="<?=$komentar['username']?>" readonly>
-      </div>
-      <div class="flex flex-col gap-2">
-         <label for="isi">Isi Komentar</label>
-         <input type="text" name="isi_komentar" class="input input-bordered" value="<?=$komentar['isi_komentar']?>">
-      </div>
-      <div class="flex flex-col gap-2">
-         <label for="id">Artikel ID</label>
-         <input type="text" name="artikel_id" value="<?=$komentar['artikel_id']?>" readonly class="input input-bordered">
-      </div>
-      <div>
-         <button type="submit" class="btn btn-primary">Tambah Komentar</button>
-      </div>
-   **Penutupan Elemen HTML**:
-   ```html
-   </div>
-   </div>
-   </div>
-   </body>
-   </html>
-   ```
-   - Menutup elemen yang dibuka sebelumnya, menyelesaikan struktur halaman.
-
-Secara keseluruhan, halaman ini menampilkan form untuk menambah komentar baru dengan informasi yang diambil dari basis data, memungkinkan pengguna untuk memperbarui isi komentar yang sudah ada.
-
-#### /dashboard</form>
-   ```
-   - Form ini mengandung input untuk `username` (readonly), `isi komentar`, dan `artikel_id` (readonly).
-   - Ketika tombol "Tambah Komentar" diklik, data akan dikirim menggunakan metode `POST`.
-
-5.               <input type="text" name="artikel_id" value="<?=$komentar['artikel_id']?>" readonly class="input input-bordered">
-                  
-                 
-               </div>
-               <div>
-                  <button type="submit" class="btn btn-primary">Tambah Komentar</button>
-               </div>
-            </form> 
-         </div>
-      </div>
-      </div>
-      
-   </div>
-   
-</body>
-</html>
-```
-Kode in.
-   - Fungsi `explode()` memecah URL berdasarkan karakter `/`, menyimpan bagian-bagiannya ke dalam array `$url_parts`.
-   - `dashboard_id` mengambil nilai dari bagian ketiga URL (jika ada), atau menggunakan nilai default `1`.
-
-2. **Struktur HTML Halaman**:
-   - `sideDashboard.php` dan `navDashboard.php` di-include untuk menampilkan sidebar dan navbar.
-   - Bagian utama halaman (`<div class="m-4 rounded bg-gray-50 p-6 ...">`) menampilkan judul, tombol tambah komentar, dan tabel daftar komentar.
-
-3. **Tabel Daftar Komentar**:
-   - Setiap komentar ditampilkan dalam tabel dengan kolom nomor, username, isi komentar, tanggal update, artikel ID, dan aksi.
-   - Terdapat dua tombol aksi: `Hapus` dan `Edit`, yang masing-masing akan memuat URL dengan `dashboard_id` dan `id_komentar` untuk penghapusan dan pengeditan komentar.
-
-Secara keseluruhan, kode ini menampilkan daftar komentar dan menyediakan navigasi untuk mengelola komentar.
-
-#### /dashboard/admin/deleteKomentar.php
-```
-<?php 
-$current_url = $_SERVER['REQUEST_URI'];
-$url_parts = explode('/', $current_url);
-$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
-Username</label>
-                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$komentar['username']?>" readonly>
-               </div>
-               <div class="flex flex-col gap-2">
-                  <label for="isi">Isi Komentar</label>
-                  <input type="text" name="isi_komentar" id="" class="input input-bordered" value="<?=$komentar['isi_komentar']?>">
-               </div>
-               <div class="flex flex-col gap-2">
-                  <label for="id">Artikel ID</label>
-               
-                     <?php $row = $artikel->fetch_all(MYSQL
-echo "<script>
-  alert('Data Komentar berhasil di hapus')
-  location.href = '/dashboard/{$dashboard_id}/komentar'
-
-</script>";
-echo  "Haruse berhasil sih cok";
-?>
-```unded bg-gray-50 min-h-screen  p-6  overflow-hidden">
-
-            <form method="post" class="grid gap-4">
-                <div class="flex flex-col gap-2">
-                  <label for="isi">
-Kode ini menampilkan pesan notifikasi dengan JavaScript saat data komentar berhasil dihapus dan kemudian mengarahkan pengguna kembali ke halaman komentar. Berikut penjelasan kode ini:
-
-1. **Mengambil ID Dashboard**:
-   ```php
-   $current_url = $_SERVER['REQUEST_URI'];
-   $url_parts = explode('/', $current_url);
-   $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
-   ```
-   - Mengambil URL saat ini dan memecahnya berdasarkan `/`.
-   - Mengambil nilai bagian ketiga dari URL sebagai `dashboard_id`, atau menggunakan default `1` jika tidak ada.
-
-2. **JavaScript untuk Notifikasi dan Redirect**:
-   ```php
-   echo "<script>
-     alert('Data Komentar berhasil di hapus')
-     location.href = '/dashboard/{$dashboard_id}/komentar'
-   </script>";
-   ```
-   - Menampilkan pesan pop-up **"Data Komenta">
-   <div class="flex min-h-screen">
-
-      <?php require_once './components/sideDashboard.php' ?>
-
-      <div class="w-5/6 ">
-   <?php require_once './components/navDashboard.php' ?>
-      <div class="mx-auto">
-         <div class="m-4 ror berhasil di hapus"** menggunakan `alert()`.
-   - Mengarahkan pengguna ke halaman daftar komentar (`/dashboard/{dashboard_id}/komentar`) menggunakan `location.href`.
-
-3. **Pesan Debugging**:
-   ```php
-   echo "Haruse berhasil sih cok";
-   ```
-   - Menampilkan pesan "Haruse berhasil sih cok" di halaman untuk tujuan debugging atau pengecekan.
-
-Kode ini memberikan feedback ke pengguna bahwa data telah berhasil dihapus dan otomatis mengarahkan mereka kembali ke daftar komentar.
-
-#### /dashboard/editKomentar.php
-```
-<?php
-$komentar = $data->fetch_assoc();
-?>
-<!DOCTYPE html>le=1.0">
-   <title>Tambah Komentar</title>
-</head>
-<body class="min-h-screen" data-theme="garden
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-sca
-                     <a href="/dashboard/<?=$dashboard_id?>/komentar/hapus/<?=$row['id_komentar']?>" class="btn btn-outline btn-sm btn-error">Hapus</a>
-                     <a href="/dashboard/<?=$dashboard_id?>/komentar/edit/<?=$row['id_komentar']?>" class="btn btn-outline btn-sm btn-info">Edit</a>
-                  </td>
-               </tr>
-            <?php endforeach?>
-         </tbody>
-        </table>
-      </div>
-            </div>
-   </div>
-</body>
-</html>
-```
-Kode di atas adalah bagian dari tampilan halaman `List Komentar` yang menampilkan daftar komentar dengan tombol untuk menambah, mengedit, atau menghapus komentar. Berikut penjelasan singkat tentang fungsinya:
-
-1. **Mendapatkan ID Dashboard**:
-   ```php
-   $current_url = $_SERVER['REQUEST_URI'];
-   $url_parts = explode('/', $current_url
-3. **`listArtikel($id)`**:
-   Mengambil daftar artikel berdasarkan `penulis_id` dan menampilkannya pada view `dashboard/artikel`.
-erta data artikel dan username penulis berdasarkan `id`.
-
-10. **`komentarStore($id)`**:
-    Menyimpan komentar baru dari ftar berdasarkan `id_komentar`, beserta daftar artikel.
-<?php
-$current_url   <td>No</td>
-               <td>Username</td>
-               <td>Isi Komentar</td>
-               <td>Tanggal Update</td>
-               <td>Ar= $_SERVER['REQUEST_URI'];
-$url_parts = explode('/', $current_url);
-$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
-?>
-<!DOCTYPE html>o min-h-screen flex">
-   <?php require_once './components/sideDashboard.php' ?>
-   <div class="w-5/6">
-      <?php require_once './components/navDashboard.php' ?>
-      <div class="m-4 rounded bg-gray-50  p-6  rounded-sm overflow-hidden">
-        <h1 class="text-2xl">List Komentar</h1>
-        <a href="/dashboard/<?=$dashboard_id?>/komentar/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Komentar </a>
-        <table id="myTable" class="display border border-gray-400">
-         <thead>
-            <tr>
-             
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>list Komentar</title>
-</head>
-<body class="min-h-screen" data-theme="garden">
-
-   <div class="mx-aut
-13. **`komentarUpdate($id, $kid)`**:cessKomentar`.
-
-Secara keseluruhan, `DashboardController` ini berfungsi untuk mengelola proses CRUD (Create, Read, Update, Delete) pada artikel, komentar, dan kategori di halaman dashboard.
-
-### Views
-#### /dashboard/admin/komentar.php
-```
-
-    Memperbarui komentar berdasarkan `id_komentar` dengan data dari `$_POST`. Jika berhasil, menampilkan halaman `dashboard/editSucorm (data `$_POST`). Jika berhasil, menampilkan pesan sukses dan mengarahkan ke halaman daftar komentar.
-
-11. **`deleteKomentar($id, $kid)`**:
-    Menghapus komentar berdasarkan `id_komentar` yang diterima dan menampilkan halaman penghapusan komentar.
-
-12. **`editPageKomentar($id, $kid)`**:
-    Menampilkan halaman edit komen
-4. **`artikelStore($id)`**:
-   Menyimpan data artikel baru yang dikirimkan melalui form (dari `$_POST`) ke database. Jika berhasil, menampilkan pesan sukses dan mengarahkan pengguna ke halaman daftar artikel.
-
-5. **`listKomentar($id)`**:
-   Mengambil semua komentar dan menampilkannya pada view `dashboard/admin/kategori`.
-
-9. **`insertPageKomentar($id)`**:
-   Menampilkan halaman untuk menambah komentar, besnya pada view `dashboard/komentar`.
-
-6. **`listKomentarAdmin()`**:
-   Mengambil semua komentar dan menampilkannya pada view `dashboard/admin/komentar` khusus untuk admin.
-
-7. **`deleteKomentarAdmin($id)`**:
-   Menghapus komentar berdasarkan `id_komentar` yang diberikan dan menampilkan halaman penghapusan komentar untuk admin.
-
-8. **`listKategoriAdmin()`**:
-   Mengambil semua kategori dan menampilkan
-
-
-
-
-
-
-
+## CRUD Komentar (Mode Admin dan Pengguna)
+Pada mode admin hanya bisa menghapus data komentar saja.
+Sedangkan mode pengguna bisa tambah,hapus,edit.
+### Config.php
+Koneksi ke database mysqli
+```
+<?php 
+namespace Config;
+use mysqli;
+use mysqli_sql_exception;
+class Database{
+   protected $conn;
+   public function __construct() {
+    $host = 'mdi.my.id';
+    $db   = 'basdeat2_klp4';
+    $user = 'basdeat2_usr4';
+    $pass = '7.8fBotqbm&C~*.@#h';
+
+
+    $this->conn = new mysqli($host, $user, $pass, $db);
+    if($this->conn->connect_error) die('Koneksi error karena : '. $this->conn->connect_error);
+
+  }
+} 
+```
+Kode di atas adalah kelas `Database` dalam PHP yang digunakan untuk mengatur koneksi ke database MySQL menggunakan ekstensi `mysqli`.
+
+- `namespace Config;`: Mendefinisikan namespace `Config` untuk kelas ini, sehingga kelas ini dapat dipanggil dengan `Config\Database`.
+- `use mysqli;` dan `use mysqli_sql_exception;`: Mengimpor kelas `mysqli` untuk koneksi dan `mysqli_sql_exception` untuk menangani error khusus MySQLi (meskipun `mysqli_sql_exception` tidak digunakan dalam kode ini).
+- `class Database{ ... }`: Mendeklarasikan kelas `Database`.
+- `protected $conn;`: Mendefinisikan properti `$conn` untuk menyimpan objek koneksi ke database.
+- `public function __construct() { ... }`: Mendefinisikan konstruktor yang otomatis dijalankan saat objek dibuat.
+- Dalam konstruktor:
+  - Variabel `host`, `db`, `user`, dan `pass` menyimpan informasi koneksi database, seperti alamat host, nama database, username, dan password.
+  - `$this->conn = new mysqli($host, $user, $pass, $db);`: Membuat koneksi ke database menggunakan data di atas.
+  - `if($this->conn->connect_error) die('Koneksi error karena : '. $this->conn->connect_error);`: Memeriksa apakah terjadi error saat koneksi. Jika ya, tampilkan pesan error dan hentikan eksekusi kode.
+
+Kode ini berfungsi untuk memastikan koneksi ke database berhasil dibuat saat objek `Database` diinisialisasi.
+
+### Models
+#### Model.php
+```
+<?php
+//mendefinisikan nama class folder agar bisa dipakai ooleh file lain
+namespace App\Models;
+use Config\Database;
+
+//class turunan dari database
+class Model extends Database {
+    protected $table;
+    protected $select = "*";
+    protected $joins = [];
+    protected $where = [];
+    
+    //memanggil construct dari parent
+    public function __construct() {
+        parent::__construct();
+    }
+
+    //method insert
+    public function insert($data) {
+        $columns = implode(", ", array_keys($data));
+        $values = "'" . implode("', '", array_values($data)) . "'";
+        $query = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values})";
+        return $this->conn->query($query) or die("Error: " . $this->conn->error);
+    }
+
+    //method delete
+    public function delete($column,$id) {
+        $query = "DELETE FROM {$this->table} WHERE {$column}='{$id}'";
+        return $this->conn->query($query) or die("Error: " . $this->conn->error);
+    }
+
+    public function all() {
+        $query = "SELECT * FROM {$this->table}";
+        return $this->conn->query($query);
+    }
+
+    public function find($column,$id) {
+        $query = "SELECT * FROM {$this->table} WHERE {$column}='{$id}'";
+        $result = $this->conn->query($query);
+        return $result;
+    }
+
+    //method update
+    public function update($column,$id, $data) {
+        $updates = [];
+        foreach($data as $key => $value) {
+            $updates[] = "{$key}='{$value}'";
+        }
+        $updates = implode(", ", $updates);
+        $query = "UPDATE {$this->table} SET {$updates} WHERE {$column}='{$id}'";
+        return $this->conn->query($query) or die("Error: " . $this->conn->error);
+    }
+
+    //method mencari data
+    public function where($column, $value) {
+        $this->where[] = "{$column}='{$value}'";
+        return $this;
+    }
+
+    //method memilih
+    public function select($columns) {
+        if (is_array($columns)) {
+            $this->select = implode(', ', $columns);
+        } else {
+            $this->select = $columns;
+        }
+        return $this;
+    }
+
+    //method menggabungkan table
+    public function join($table, $first, $operator, $second, $type = 'INNER') {
+        $this->joins[] = sprintf(' %s JOIN %s ON %s %s %s', 
+            $type, $table, $first, $operator, $second
+        );
+        return $this;
+    }
+ 
+
+    public function leftJoin($table, $first, $operator, $second) {
+        return $this->join($table, $first, $operator, $second, 'LEFT');
+    }
+
+    public function rightJoin($table, $first, $operator, $second) {
+        return $this->join($table, $first, $operator, $second, 'RIGHT');
+    }
+
+    //method ambil data 
+    public function get() {
+        $query = "SELECT {$this->select} FROM {$this->table}";
+        
+        if (!empty($this->joins)) {
+            $query .= implode(' ', $this->joins);
+        }
+
+        if (!empty($this->where)) {
+            $query .= ' WHERE ' . implode(' AND ', $this->where);
+        }
+
+        $this->select = "*";
+        $this->joins = [];
+        $this->where = [];
+
+        return $this->conn->query($query);
+    } 
+}
+```
+Kode ini mendefinisikan kelas `Model` yang berfungsi sebagai model dasar untuk operasi CRUD di database menggunakan konsep OOP dalam PHP. Kelas ini merupakan turunan dari `Database` sehingga otomatis mewarisi koneksi ke database.
+
+- **Namespace dan Inheritance**: 
+  - `namespace App\Models;` menentukan lokasi `Model` dalam namespace `App\Models`.
+  - `class Model extends Database` mewarisi semua metode dan properti dari kelas `Database`.
+
+- **Properti Utama**:
+  - `$table`: Menyimpan nama tabel yang akan diakses.
+  - `$select`, `$joins`, dan `$where`: Menyimpan bagian query SQL seperti kolom yang dipilih (`select`), kondisi penggabungan tabel (`joins`), dan kondisi pencarian (`where`).
+
+- **Metode CRUD**:
+  - `insert($data)`: Menambahkan data baru ke tabel berdasarkan array `data`.
+  - `delete($column, $id)`: Menghapus data berdasarkan kolom dan id tertentu.
+  - `update($column, $id, $data)`: Memperbarui data berdasarkan kolom, id, dan array data baru.
+  - `all()`: Mengambil semua data dari tabel.
+  - `find($column, $id)`: Mengambil satu data berdasarkan kolom dan id.
+
+- **Query Builder**:
+  - `where($column, $value)`: Menambahkan kondisi pencarian.
+  - `select($columns)`: Memilih kolom spesifik untuk diambil dari tabel.
+  - `join`, `leftJoin`, `rightJoin`: Menggabungkan tabel lain dalam query dengan berbagai tipe join (`INNER`, `LEFT`, `RIGHT`).
+  - `get()`: Menyusun dan mengeksekusi query berdasarkan kondisi `select`, `joins`, dan `where`.
+
+Metode-metode ini dirancang untuk mempermudah operasi query yang sering digunakan, sehingga kode menjadi lebih rapi dan fleksibel.
+
+#### Komentar.php
+```
+<?php
+namespace App\Models;
+class Komentar extends Model{
+   public function __construct()
+   {
+    parent :: __construct();  
+    $this->table = "komentar";
+   }
+}
+?>
+```
+
+Kode ini mendefinisikan kelas `Komentar` yang merupakan turunan dari kelas `Model` dalam namespace `App\Models`.
+
+- **Namespace dan Inheritance**:
+  - `namespace App\Models;` menetapkan lokasi `Komentar` dalam namespace `App\Models`.
+  - `class Komentar extends Model` menyatakan bahwa `Komentar` mewarisi semua metode dan properti dari kelas `Model`, termasuk koneksi database dan fungsi CRUD.
+
+- **Konstruktor**:
+  - `public function __construct()` mendefinisikan konstruktor untuk kelas `Komentar`.
+  - `parent::__construct();` memanggil konstruktor dari kelas `Model`, memastikan koneksi database siap digunakan.
+  - `$this->table = "komentar";` menetapkan nama tabel yang akan digunakan oleh model ini, yaitu tabel `komentar`.
+
+Kelas `Komentar` ini siap untuk menjalankan operasi CRUD di tabel `komentar` menggunakan fungsi-fungsi yang diwarisi dari `Model`.
+
+### Controllers
+#### DashboardController.php
+```
+<?php 
+
+namespace App\Controllers;
+//menggunakan file lain
+use App\Controller;
+use App\Models\Penulis;
+use App\Models\Artikel;
+use App\Models\Komentar;
+use App\Models\Kategori;
+
+//class turunan dari controller
+class DashboardController extends Controller {
+   private $penulis, $artikel, $userId, $komentar, $kategori;
+   public function __construct(){
+      $this->penulis = new Penulis();
+      //instansiasi model artikel
+      $this->artikel = new Artikel();
+      $this->komentar = new Komentar();
+      $this->kategori = new Kategori();
+   }
+   public function index($id){
+      $user = $this->penulis->find('id_penulis',$id);
+      $this->userId = $id;
+      return $this->render(
+         "dashboard/index",
+         ['user'=> $user]
+      );
+   }
+
+   public function listKomentar($id){
+      $result = $this->komentar->all();
+      return $this->render(view: 'dashboard/komentar', data: ['data' => $result]);
+
+   }
+
+   public function listKomentarAdmin(){
+      $result = $this->komentar->all();
+      return $this->render(view: 'dashboard/admin/komentar', data: ['data' => $result]);
+   }
+
+   public function deleteKomentarAdmin($id){
+      $result = $this->komentar->delete('id_komentar', $id);
+      return $this->render('/dashboard/admin/deleteKomentar');
+   }
+
+   public function listKategoriAdmin(){
+      $result = $this->kategori->all();
+      return $this->render(view: 'dashboard/admin/kategori', data: ['kategori' => $result]);
+   }
+
+   public function insertPageKomentar($id){
+      $result = $this->komentar->find('artikel_id', $id);
+      $artikel = $this->artikel->all();
+      $username = $this->penulis->find('id_penulis', $id);
+      return $this->render('dashboard/insertKomentar',['artikel'=>$artikel, 'uid'=>$username->fetch_assoc()]);
+   }
+
+   public function komentarStore($id){
+      $result = $this->komentar->insert($_POST);
+      if($result){
+         echo "<script>
+         alert('Data Komentar berhasil di tambah')
+         location.href = '/dashboard/{$id}/komentar' </script>" 
+        ;
+      }
+   }
+
+   public function deleteKomentar($id,$kid){
+      $result = $this->komentar->delete('id_komentar', id: $kid);
+      return $this->render("/dashboard/deleteKomentar");
+   }
+
+   public function editPageKomentar($id,$kid){
+      $result = $this->komentar->find('id_komentar', $kid);
+      $artikel = $this->artikel->all();
+      return $this->render('dashboard/editKomentar',['data'=>$result 'artikel'=>$artikel]);
+   }
+
+   public function komentarUpdate($id,$kid){
+      $result = $this->komentar->update('id_komentar', $kid, $_POST);
+      if($result){
+         $this->render('dashboard/editSuccessKomentar', ['']);
+      }
+   }
+}
+```
+Kode PHP di atas adalah definisi dari `DashboardController`, sebuah class yang digunakan untuk mengelola halaman dashboard di aplikasi. Class ini merupakan turunan dari `Controller` dan mengatur interaksi dengan berbagai model, yaitu `Penulis`, `Artikel`, `Komentar`, dan `Kategori`. Berikut penjelasan setiap method dalam class ini:
+
+1. **`__construct()`**: 
+   Constructor yang menginisialisasi objek untuk setiap model (`Penulis`, `Artikel`, `Komentar`, `Kategori`) agar dapat digunakan dalam method-method lain di `DashboardController`.
+
+2. **`index($id)`**:
+   Menampilkan halaman dashboard utama untuk penulis berdasarkan `id` yang diterima sebagai parameter. Method ini mengambil data penulis dan meneruskannya ke view `dashboard/index`.
+
+3. **`listArtikel($id)`**:
+   Mengambil daftar artikel berdasarkan `penulis_id` dan menampilkannya pada view `dashboard/artikel`.
+
+4. **`artikelStore($id)`**:
+   Menyimpan data artikel baru yang dikirimkan melalui form (dari `$_POST`) ke database. Jika berhasil, menampilkan pesan sukses dan mengarahkan pengguna ke halaman daftar artikel.
+
+5. **`listKomentar($id)`**:
+   Mengambil semua komentar dan menampilkannya pada view `dashboard/komentar`.
+
+6. **`listKomentarAdmin()`**:
+   Mengambil semua komentar dan menampilkannya pada view `dashboard/admin/komentar` khusus untuk admin.
+
+7. **`deleteKomentarAdmin($id)`**:
+   Menghapus komentar berdasarkan `id_komentar` yang diberikan dan menampilkan halaman penghapusan komentar untuk admin.
+
+8. **`listKategoriAdmin()`**:
+   Mengambil semua kategori dan menampilkannya pada view `dashboard/admin/kategori`.
+
+9. **`insertPageKomentar($id)`**:
+   Menampilkan halaman untuk menambah komentar, beserta data artikel dan username penulis berdasarkan `id`.
+
+10. **`komentarStore($id)`**:
+    Menyimpan komentar baru dari form (data `$_POST`). Jika berhasil, menampilkan pesan sukses dan mengarahkan ke halaman daftar komentar.
+
+11. **`deleteKomentar($id, $kid)`**:
+    Menghapus komentar berdasarkan `id_komentar` yang diterima dan menampilkan halaman penghapusan komentar.
+
+12. **`editPageKomentar($id, $kid)`**:
+    Menampilkan halaman edit komentar berdasarkan `id_komentar`, beserta daftar artikel.
+
+13. **`komentarUpdate($id, $kid)`**:
+    Memperbarui komentar berdasarkan `id_komentar` dengan data dari `$_POST`. Jika berhasil, menampilkan halaman `dashboard/editSuccessKomentar`.
+
+Secara keseluruhan, `DashboardController` ini berfungsi untuk mengelola proses CRUD (Create, Read, Update, Delete) pada artikel, komentar, dan kategori di halaman dashboard.
+
+### Views
+#### /dashboard/admin/komentar.php
+```
+<?php
+$current_url = $_SERVER['REQUEST_URI'];
+$url_parts = explode('/', $current_url);
+$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>list Komentar</title>
+</head>
+<body class="min-h-screen" data-theme="garden">
+
+   <div class="mx-auto min-h-screen flex">
+   <?php require_once './components/sideDashboard.php' ?>
+   <div class="w-5/6">
+      <?php require_once './components/navDashboard.php' ?>
+      <div class="m-4 rounded bg-gray-50  p-6  rounded-sm overflow-hidden">
+        <h1 class="text-2xl">List Komentar</h1>
+        <a href="/dashboard/<?=$dashboard_id?>/komentar/tambah" class="btn btn-sm text-white btn-success btn-outline"> + Tambah Komentar </a>
+        <table id="myTable" class="display border border-gray-400">
+         <thead>
+            <tr>
+               <td>No</td>
+               <td>Username</td>
+               <td>Isi Komentar</td>
+               <td>Tanggal Update</td>
+               <td>Artikel Id</td>
+               <td>Aksi</td>
+            </tr>
+         </thead>
+         <tbody>
+            <?php $no=1; foreach($data as $row) :?>
+               <tr>
+                  <td><?=$no++?></td>
+                  <td><?=$row['username']?></td>
+                  <td><?=$row['isi_komentar']?></td>
+                  <td><?=$row['tanggal_update']?></td>
+                  <td><?=$row['artikel_id']?></td>
+                  <td>
+                     <a href="/dashboard/<?=$dashboard_id?>/komentar/hapus/<?=$row['id_komentar']?>" class="btn btn-outline btn-sm btn-error">Hapus</a>
+                     <a href="/dashboard/<?=$dashboard_id?>/komentar/edit/<?=$row['id_komentar']?>" class="btn btn-outline btn-sm btn-info">Edit</a>
+                  </td>
+               </tr>
+            <?php endforeach?>
+         </tbody>
+        </table>
+      </div>
+            </div>
+   </div>
+</body>
+</html>
+```
+Kode di atas adalah bagian dari tampilan halaman `List Komentar` yang menampilkan daftar komentar dengan tombol untuk menambah, mengedit, atau menghapus komentar. Berikut penjelasan singkat tentang fungsinya:
+
+1. **Mendapatkan ID Dashboard**:
+   ```php
+   $current_url = $_SERVER['REQUEST_URI'];
+   $url_parts = explode('/', $current_url);
+   $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
+   ```
+   - Variabel `$current_url` mengambil URL halaman saat ini.
+   - Fungsi `explode()` memecah URL berdasarkan karakter `/`, menyimpan bagian-bagiannya ke dalam array `$url_parts`.
+   - `dashboard_id` mengambil nilai dari bagian ketiga URL (jika ada), atau menggunakan nilai default `1`.
+
+2. **Struktur HTML Halaman**:
+   - `sideDashboard.php` dan `navDashboard.php` di-include untuk menampilkan sidebar dan navbar.
+   - Bagian utama halaman (`<div class="m-4 rounded bg-gray-50 p-6 ...">`) menampilkan judul, tombol tambah komentar, dan tabel daftar komentar.
+
+3. **Tabel Daftar Komentar**:
+   - Setiap komentar ditampilkan dalam tabel dengan kolom nomor, username, isi komentar, tanggal update, artikel ID, dan aksi.
+   - Terdapat dua tombol aksi: `Hapus` dan `Edit`, yang masing-masing akan memuat URL dengan `dashboard_id` dan `id_komentar` untuk penghapusan dan pengeditan komentar.
+
+Secara keseluruhan, kode ini menampilkan daftar komentar dan menyediakan navigasi untuk mengelola komentar.
+
+#### /dashboard/admin/deleteKomentar.php
+```
+<?php 
+$current_url = $_SERVER['REQUEST_URI'];
+$url_parts = explode('/', $current_url);
+$dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
+
+echo "<script>
+  alert('Data Komentar berhasil di hapus')
+  location.href = '/dashboard/{$dashboard_id}/komentar'
+
+</script>";
+echo  "Haruse berhasil sih cok";
+?>
+```
+Kode ini menampilkan pesan notifikasi dengan JavaScript saat data komentar berhasil dihapus dan kemudian mengarahkan pengguna kembali ke halaman komentar. Berikut penjelasan kode ini:
+
+1. **Mengambil ID Dashboard**:
+   ```php
+   $current_url = $_SERVER['REQUEST_URI'];
+   $url_parts = explode('/', $current_url);
+   $dashboard_id = isset($url_parts[2]) ? $url_parts[2] : '1';
+   ```
+   - Mengambil URL saat ini dan memecahnya berdasarkan `/`.
+   - Mengambil nilai bagian ketiga dari URL sebagai `dashboard_id`, atau menggunakan default `1` jika tidak ada.
+
+2. **JavaScript untuk Notifikasi dan Redirect**:
+   ```php
+   echo "<script>
+     alert('Data Komentar berhasil di hapus')
+     location.href = '/dashboard/{$dashboard_id}/komentar'
+   </script>";
+   ```
+   - Menampilkan pesan pop-up **"Data Komentar berhasil di hapus"** menggunakan `alert()`.
+   - Mengarahkan pengguna ke halaman daftar komentar (`/dashboard/{dashboard_id}/komentar`) menggunakan `location.href`.
+
+3. **Pesan Debugging**:
+   ```php
+   echo "Haruse berhasil sih cok";
+   ```
+   - Menampilkan pesan "Haruse berhasil sih cok" di halaman untuk tujuan debugging atau pengecekan.
+
+Kode ini memberikan feedback ke pengguna bahwa data telah berhasil dihapus dan otomatis mengarahkan mereka kembali ke daftar komentar.
+
+#### /dashboard/editKomentar.php
+```
+<?php
+$komentar = $data->fetch_assoc();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Tambah Komentar</title>
+</head>
+<body class="min-h-screen" data-theme="garden">
+   <div class="flex min-h-screen">
+
+      <?php require_once './components/sideDashboard.php' ?>
+
+      <div class="w-5/6 ">
+   <?php require_once './components/navDashboard.php' ?>
+      <div class="mx-auto">
+         <div class="m-4 rounded bg-gray-50 min-h-screen  p-6  overflow-hidden">
+
+            <form method="post" class="grid gap-4">
+                <div class="flex flex-col gap-2">
+                  <label for="isi">Username</label>
+                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$komentar['username']?>" readonly>
+               </div>
+               <div class="flex flex-col gap-2">
+                  <label for="isi">Isi Komentar</label>
+                  <input type="text" name="isi_komentar" id="" class="input input-bordered" value="<?=$komentar['isi_komentar']?>">
+               </div>
+               <div class="flex flex-col gap-2">
+                  <label for="id">Artikel ID</label>
+               
+                     <?php $row = $artikel->fetch_all(MYSQLI_ASSOC);?>
+                     <input type="text" name="artikel_id" value="<?=$komentar['artikel_id']?>" readonly class="input input-bordered">
+                  
+                 
+               </div>
+               <div>
+                  <button type="submit" class="btn btn-primary">Tambah Komentar</button>
+               </div>
+            </form> 
+         </div>
+      </div>
+      </div>
+      
+   </div>
+   
+</body>
+</html>
+```
+Kode ini adalah halaman untuk menambah komentar dalam aplikasi berbasis web. Berikut penjelasan singkat dan jelas mengenai setiap bagian:
+
+1. **Mengambil Data Komentar**:
+   ```php
+   $komentar = $data->fetch_assoc();
+   ```
+   - Mengambil satu baris data komentar dari objek `$data` (biasanya hasil dari query basis data) dan menyimpannya dalam variabel `$komentar`.
+
+2. **Struktur HTML Dasar**:
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tambah Komentar</title>
+   </head>
+   ```
+   - Menetapkan jenis dokumen, bahasa, dan meta tag untuk pengaturan karakter dan responsif.
+
+3. **Tata Letak Halaman**:
+   ```html
+   <body class="min-h-screen" data-theme="garden">
+      <div class="flex min-h-screen">
+         <?php require_once './components/sideDashboard.php' ?>
+         <div class="w-5/6 ">
+            <?php require_once './components/navDashboard.php' ?>
+   ```
+   - Membuat struktur dasar untuk tampilan dengan menggunakan komponen sidebar dan navigasi.
+
+4. **Formulir untuk Menambah Komentar**:
+   ```html
+   <form method="post" class="grid gap-4">
+      <div class="flex flex-col gap-2">
+         <label for="isi">Username</label>
+         <input type="text" name="username" class="input input-bordered" value="<?=$komentar['username']?>" readonly>
+      </div>
+      <div class="flex flex-col gap-2">
+         <label for="isi">Isi Komentar</label>
+         <input type="text" name="isi_komentar" class="input input-bordered" value="<?=$komentar['isi_komentar']?>">
+      </div>
+      <div class="flex flex-col gap-2">
+         <label for="id">Artikel ID</label>
+         <input type="text" name="artikel_id" value="<?=$komentar['artikel_id']?>" readonly class="input input-bordered">
+      </div>
+      <div>
+         <button type="submit" class="btn btn-primary">Tambah Komentar</button>
+      </div>
+   </form>
+   ```
+   - Form ini mengandung input untuk `username` (readonly), `isi komentar`, dan `artikel_id` (readonly).
+   - Ketika tombol "Tambah Komentar" diklik, data akan dikirim menggunakan metode `POST`.
+
+5. **Penutupan Elemen HTML**:
+   ```html
+   </div>
+   </div>
+   </div>
+   </body>
+   </html>
+   ```
+   - Menutup elemen yang dibuka sebelumnya, menyelesaikan struktur halaman.
+
+Secara keseluruhan, halaman ini menampilkan form untuk menambah komentar baru dengan informasi yang diambil dari basis data, memungkinkan pengguna untuk memperbarui isi komentar yang sudah ada.
+
+#### /dashboard/insertKomentar.php
+```
+<?php
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Tambah Komentar</title>
+</head>
+<body class="min-h-screen" data-theme="garden">
+   <div class="flex min-h-screen">
+
+      <?php require_once './components/sideDashboard.php' ?>
+
+      <div class="w-5/6 ">
+   <?php require_once './components/navDashboard.php' ?>
+      <div class="mx-auto ">
+         <div class=" m-4 rounded bg-gray-50 min-h-screen p-6  overflow-hidden">
+
+            <form method="post" class="grid gap-4">
+                <div class="flex flex-col gap-2">
+                  <label for="isi">Username</label>
+                  <input type="text" name="username" id="" class="input input-bordered" value="<?=$uid['nama']?>" readonly>
+               </div>
+               <div class="flex flex-col gap-2">
+                  <label for="isi">Isi Komentar</label>
+                  <input type="text" name="isi_komentar" id="" class="input input-bordered">
+               </div>
+               <div class="flex flex-col gap-2">
+                  <label for="id">Artikel ID</label>
+                  <select name="artikel_id" id="" class="select select-bordered">
+                     <?php foreach($artikel as $row) : ?>
+                        <option value="<?=$row['id_artikel']?>"><?=$row['judul']?></option>
+                     <?php endforeach?>
+                  </select>
+               </div>
+               <div>
+                  <button type="submit" class="btn btn-primary">Tambah Komentar</button>
+               </div>
+            </form> 
+         </div>
+      </div>
+      </div>
+      
+   </div>
+   
+</body>
+</html>
+```
+Kode ini adalah halaman untuk menambah komentar dalam aplikasi berbasis web. Berikut adalah penjelasan singkat mengenai setiap bagian:
+
+1. **Deklarasi PHP**:
+   ```php
+   <?php
+   ?>
+   ```
+   - Blok PHP kosong, bisa digunakan untuk logika atau pengambilan data, tetapi saat ini tidak ada kode di dalamnya.
+
+2. **Struktur HTML Dasar**:
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tambah Komentar</title>
+   </head>
+   ```
+   - Menentukan tipe dokumen, bahasa, serta meta tag untuk pengaturan karakter dan responsif.
+
+3. **Tata Letak Halaman**:
+   ```html
+   <body class="min-h-screen" data-theme="garden">
+      <div class="flex min-h-screen">
+         <?php require_once './components/sideDashboard.php' ?>
+         <div class="w-5/6 ">
+            <?php require_once './components/navDashboard.php' ?>
+   ```
+   - Membuat struktur tampilan dengan komponen sidebar dan navigasi.
+
+4. **Formulir untuk Menambah Komentar**:
+   ```html
+   <form method="post" class="grid gap-4">
+      <div class="flex flex-col gap-2">
+         <label for="isi">Username</label>
+         <input type="text" name="username" class="input input-bordered" value="<?=$uid['nama']?>" readonly>
+      </div>
+      <div class="flex flex-col gap-2">
+         <label for="isi">Isi Komentar</label>
+         <input type="text" name="isi_komentar" class="input input-bordered">
+      </div>
+      <div class="flex flex-col gap-2">
+         <label for="id">Artikel ID</label>
+         <select name="artikel_id" class="select select-bordered">
+            <?php foreach($artikel as $row) : ?>
+               <option value="<?=$row['id_artikel']?>"><?=$row['judul']?></option>
+            <?php endforeach?>
+         </select>
+      </div>
+      <div>
+         <button type="submit" class="btn btn-primary">Tambah Komentar</button>
+      </div>
+   </form>
+   ```
+   - Form ini mengandung input untuk `username` (readonly), `isi komentar`, dan dropdown untuk memilih `artikel_id`.
+   - Dropdown menampilkan semua artikel yang diambil dari variabel `$artikel`, setiap opsi memiliki `id_artikel` sebagai nilai dan `judul` sebagai tampilan.
+   - Ketika tombol "Tambah Komentar" ditekan, data akan dikirim menggunakan metode `POST`.
+
+5. **Penutupan Elemen HTML**:
+   ```html
+   </div>
+   </div>
+   </div>
+   </body>
+   </html>
+   ```
+   - Menutup elemen yang dibuka sebelumnya, menyelesaikan struktur halaman.
+
+Secara keseluruhan, halaman ini memungkinkan pengguna untuk menambah komentar baru dengan memilih artikel dan mengisi informasi komentar. Data username ditampilkan secara otomatis dan tidak bisa diubah.
+
+### Routes
+#### Index.php
+```
+<?php
+
+use App\Controllers\ArtikelController;
+use App\Controllers\DashboardController;
+use App\Router;
+
+$router = new Router();
+
+//DELETE KOMENTAR (ADMIN)
+$router->get('/dashboard/admin/komentar/{id}', DashboardController::class, "deleteKomentarAdmin");
+$router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
+
+//CRUD KOMENTAR
+$router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
+$router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
+$router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
+$router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
+$router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
+
+$router->get('/dashboard/admin/komentar/{kid}', DashboardController::class, 'deleteKomentarAdmin');
+$router->dispatch();
+```
+Kode ini adalah konfigurasi routing untuk mengelola operasi komentar di aplikasi. Berikut penjelasan singkat dari setiap bagian:
+
+1. **Inisialisasi Router**:
+   ```php
+   $router = new Router();
+   ```
+   - Membuat instance router untuk menangani rute HTTP.
+
+2. **Rute Penghapusan Komentar oleh Admin**:
+   ```php
+   $router->get('/dashboard/admin/komentar/{id}', DashboardController::class, "deleteKomentarAdmin");
+   ```
+   - Mengarahkan permintaan `GET` ke `deleteKomentarAdmin` dalam `DashboardController` untuk menghapus komentar sebagai admin.
+
+3. **Rute Menampilkan Komentar**:
+   ```php
+   $router->get('/dashboard/{id}/komentar', DashboardController::class, "listKomentar");
+   ```
+   - Menampilkan daftar komentar berdasarkan `id` dashboard.
+
+4. **Rute CRUD Komentar**:
+   - **Tambah Komentar**:
+     ```php
+     $router->get('/dashboard/{id}/komentar/tambah', DashboardController::class, 'insertPageKomentar');
+     $router->post('/dashboard/{id}/komentar/tambah', DashboardController::class, 'komentarStore');
+     ```
+     - Menampilkan halaman tambah komentar (GET) dan menyimpan komentar baru (POST).
+
+   - **Hapus Komentar**:
+     ```php
+     $router->get('/dashboard/{id}/komentar/hapus/{kid}', DashboardController::class, 'deleteKomentar');
+     ```
+     - Menghapus komentar berdasarkan ID komentar (`kid`).
+
+   - **Edit Komentar**:
+     ```php
+     $router->get('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class, 'editPageKomentar');
+     $router->post('/dashboard/{id}/komentar/edit/{kid}', DashboardController::class,'komentarUpdate');
+     ```
+     - Menampilkan halaman edit komentar (GET) dan memperbarui komentar (POST).
+
+5. **Menjalankan Router**:
+   ```php
+   $router->dispatch();
+   ```
+   - Memproses permintaan sesuai dengan rute yang telah ditentukan. 
+
+Kode ini mengatur rute untuk mengelola komentar, termasuk menambah, mengedit, dan menghapus komentar di dashboard.
 
 
