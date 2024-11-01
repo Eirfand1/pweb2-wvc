@@ -17,14 +17,9 @@ npm run dev
 7. Open http://localhost:8080
 
 
-# Documentation
-
-# Manajemen Artikel 
+# Documentation Manajemen Artikel
 
 
-
-
-## CRUD Penulis (Mode Admin)
 ### Config.php
 Koneksi ke database mysqli
 ```php
@@ -178,9 +173,9 @@ Lalu definisikan routenya
 <?php
 $router->get('/', ArtikelController::class, 'index');
 $router->get('/{id}',ArtikelController::class, 'show');
-
-# Penulis
 ```
+
+## CRUD Penulis (Mode Admin)
 
 Penulis.php
 Kelas penulis sebagai model untuk tabel penulis
